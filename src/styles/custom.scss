@@ -1,0 +1,228 @@
+div:where(.swal2-container) {
+    z-index: 999999 !important;
+}
+
+.dark .swal2-popup {
+    background-color: #242526 !important;
+    color: #e4e6eb !important;
+}
+
+.max-z-index {
+    z-index: 2147483647 !important;
+}
+
+.text__link {
+    text-decoration: underline !important;
+}
+
+@keyframes rotate360 {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rotate-animation {
+    animation: rotate360 5s linear infinite;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation-name: fadeInUp;
+    animation-duration: 0.6s;
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+.delay-1 {
+    animation-delay: 0.3s;
+}
+
+.delay-2 {
+    animation-delay: 0.6s;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+
+
+/* QR Container với hiệu ứng MoMo */
+.qr-container {
+    position: relative;
+    overflow: hidden;
+
+    /* Scanning line effect */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg,
+                transparent 0%,
+                #4A90E2 20%,
+                #60A5FA 50%,
+                #4A90E2 80%,
+                transparent 100%);
+        z-index: 10;
+        animation: scanLine 2.5s ease-in-out infinite;
+        box-shadow: 0 0 10px rgba(74, 144, 226, 0.6);
+    }
+
+    /* Corner brackets */
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 8px;
+        background:
+            /* Top left */
+            linear-gradient(to right, #4A90E2 20px, transparent 20px) 0 0,
+            linear-gradient(to bottom, #4A90E2 20px, transparent 20px) 0 0,
+            /* Top right */
+            linear-gradient(to left, #4A90E2 20px, transparent 20px) 100% 0,
+            linear-gradient(to bottom, #4A90E2 20px, transparent 20px) 100% 0,
+            /* Bottom left */
+            linear-gradient(to right, #4A90E2 20px, transparent 20px) 0 100%,
+            linear-gradient(to top, #4A90E2 20px, transparent 20px) 0 100%,
+            /* Bottom right */
+            linear-gradient(to left, #4A90E2 20px, transparent 20px) 100% 100%,
+            linear-gradient(to top, #4A90E2 20px, transparent 20px) 100% 100%;
+        background-size: 20px 3px, 3px 20px;
+        background-repeat: no-repeat;
+        z-index: 10;
+        animation: cornerGlow 2s ease-in-out infinite alternate;
+        pointer-events: none;
+    }
+
+    /* Subtle glow around container */
+    box-shadow: 0 0 0 1px rgba(74, 144, 226, 0.1),
+    0 0 20px rgba(74, 144, 226, 0.05),
+    0 4px 20px rgba(0, 0, 0, 0.08);
+
+    /* Gentle pulse animation */
+    animation: qrPulse 3s ease-in-out infinite;
+
+    img {
+        transition: all 0.3s ease;
+        filter: brightness(1.02) contrast(1.05);
+    }
+}
+
+/* Scanning line animation */
+// @keyframes scanLine {
+//     0% {
+//         transform: translateY(-100%);
+//         opacity: 0;
+//     }
+
+//     10% {
+//         opacity: 1;
+//     }
+
+//     90% {
+//         opacity: 1;
+//     }
+
+//     100% {
+//         transform: translateY(calc(192px + 100%));
+//         opacity: 0;
+//     }
+// }
+
+/* Corner glow animation */
+@keyframes cornerGlow {
+    0% {
+        opacity: 0.6;
+        filter: brightness(1);
+    }
+
+    100% {
+        opacity: 1;
+        filter: brightness(1.2);
+    }
+}
+
+/* Subtle pulse for entire container */
+@keyframes qrPulse {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 0 1px rgba(74, 144, 226, 0.1),
+            0 0 20px rgba(74, 144, 226, 0.05),
+            0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    50% {
+        box-shadow:
+            0 0 0 1px rgba(74, 144, 226, 0.2),
+            0 0 25px rgba(74, 144, 226, 0.1),
+            0 4px 25px rgba(0, 0, 0, 0.12);
+    }
+}
+
+/* Optional: Refresh button hover effect */
+.kt-btn-secondary:hover i {
+    animation: refreshSpin 0.5s ease-in-out;
+}
+
+@keyframes refreshSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(180deg);
+    }
+}
+
+/* Dark mode adjustments */
+.dark .qr-container {
+    &::before {
+        background: linear-gradient(90deg,
+                transparent 0%,
+                #60A5FA 20%,
+                #93C5FD 50%,
+                #60A5FA 80%,
+                transparent 100%);
+    }
+
+    &::after {
+        background:
+            linear-gradient(to right, #60A5FA 20px, transparent 20px) 0 0,
+            linear-gradient(to bottom, #60A5FA 20px, transparent 20px) 0 0,
+            linear-gradient(to left, #60A5FA 20px, transparent 20px) 100% 0,
+            linear-gradient(to bottom, #60A5FA 20px, transparent 20px) 100% 0,
+            linear-gradient(to right, #60A5FA 20px, transparent 20px) 0 100%,
+            linear-gradient(to top, #60A5FA 20px, transparent 20px) 0 100%,
+            linear-gradient(to left, #60A5FA 20px, transparent 20px) 100% 100%,
+            linear-gradient(to top, #60A5FA 20px, transparent 20px) 100% 100%;
+        background-size: 20px 3px, 3px 20px;
+        background-repeat: no-repeat;
+    }
+}
