@@ -1,10 +1,42 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
-    <div class="container mx-auto py-8">
-      <h1 class="text-4xl font-bold text-blue-600 text-center mb-8">
-        Nuxt 3 + Mock API Demo
-      </h1>
-      <NuxtPage />
-    </div>
+  <div id="app" :class="{ 'bg-gray-900': darkMode }" class="relative">
+    <NuxtPage></NuxtPage>
   </div>
 </template>
+
+<script setup>
+// Meta configuration
+useHead({
+  title: 'Sign In | TailAdmin - Tailwind CSS Admin Dashboard Template',
+  meta: [
+    { charset: 'utf-8' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    { name: 'description', content: 'Sign in to TailAdmin - Free and Open-Source Tailwind CSS Admin Dashboard Template' }
+  ],
+  link: [
+    { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+  ]
+})
+
+// Reactive state
+const darkMode = ref(false)
+onMounted(() => {
+  const savedTheme = localStorage.getItem('darkMode')
+  if (savedTheme) {
+    darkMode.value = JSON.parse(savedTheme)
+  } else {
+    darkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+})
+
+// Watch dark mode changes
+watch(darkMode, (newValue) => {
+  localStorage.setItem('darkMode', JSON.stringify(newValue))
+})
+
+// Methods
+const toggleDarkMode = () => {
+  darkMode.value = !darkMode.value
+}
+
+</script>

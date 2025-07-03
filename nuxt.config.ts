@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   modules: [
     '@nuxtjs/tailwindcss',
@@ -20,6 +20,25 @@ export default defineNuxtConfig({
     },
   },
 
+  // Thêm các script từ HTML gốc
+  app: {
+    head: {
+      meta: [
+        { charset: 'utf-8' },
+        {
+          name: 'viewport',
+          content:
+            'width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0',
+        },
+        { 'http-equiv': 'X-UA-Compatible', content: 'ie=edge' },
+      ],
+      link: [
+        { rel: 'icon', href: '/favicon.ico' },
+        { rel: 'stylesheet', href: '/css/style.css' },
+      ],
+    },
+  },
+
   vite: {
     server: {
       hmr: {
@@ -33,6 +52,7 @@ export default defineNuxtConfig({
       },
     },
   },
+
   hooks: {
     'pages:extend'(pages) {
       pages.forEach((page) => {
@@ -42,6 +62,7 @@ export default defineNuxtConfig({
       })
     },
   },
+
   // Clear build cache
   nitro: {
     storage: {
