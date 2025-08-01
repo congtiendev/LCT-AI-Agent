@@ -1,0 +1,35 @@
+{
+    "common": {
+        "or": "Or",
+        "and": "and"
+    },
+    "auth": {
+        "subtitle": "High-quality AI human resource platform",
+        "createAccountSubtitle": "Create an account to start your journey",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "signInWith": "Sign in with {provider}",
+        "signUpWith": "Sign up with {provider}",
+        "forgotPassword": "Forgot password?",
+        "noAccount": "Don't have an account?",
+        "haveAccount": "Already have an account?",
+        "createAccount": "Create Account",
+        "agreeToTerms": "I agree to the",
+        "termsAndConditions": "Terms and Conditions",
+        "privacyPolicy": "Privacy Policy"
+    },
+    "form": {
+        "email": "Email",
+        "emailPlaceholder": "Enter your email",
+        "password": "Password",
+        "passwordPlaceholder": "Enter your password",
+        "confirmPassword": "Confirm Password",
+        "confirmPasswordPlaceholder": "Re-enter your password",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "Enter your full name",
+        "username": "Username",
+        "usernamePlaceholder": "Enter your username",
+        "phone": "Phone Number",
+        "phonePlaceholder": "Enter your phone number"
+    }
+}

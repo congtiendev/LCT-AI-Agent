@@ -1,6 +1,8 @@
 <template>
   <div id="app" :class="{ 'bg-gray-900': darkMode }" class="relative">
-    <NuxtPage></NuxtPage>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 

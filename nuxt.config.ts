@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/google-fonts',
+    '@nuxtjs/i18n', // Thêm i18n module
   ],
 
   css: ['~/assets/css/main.css'],
@@ -19,6 +20,67 @@ export default defineNuxtConfig({
       Inter: [400, 500, 600, 700],
     },
   },
+
+  i18n: {
+    locales: [
+      {
+        code: 'vi',
+        name: 'Tiếng Việt',
+        file: 'vi.json',
+      },
+      {
+        code: 'en',
+        name: 'English',
+        file: 'en.json',
+      },
+    ],
+    defaultLocale: 'vi',
+    langDir: 'locales/',
+  },
+
+  imports: {
+    presets: ['vue', 'vue-router', 'vue-i18n'],
+  },
+
+  components: [
+    // Components chính (mặc định)
+    {
+      path: '~/components',
+      pathPrefix: false,
+      extensions: ['vue'],
+      global: true,
+    },
+    // Auth components
+    {
+      path: '~/components/auth',
+      prefix: 'Auth',
+      global: true,
+    },
+    // Base components
+    {
+      path: '~/components/base',
+      prefix: 'Base',
+      global: true,
+    },
+    // UI components
+    {
+      path: '~/components/ui',
+      prefix: 'Ui',
+      global: true,
+    },
+    // Form components (không có 's' ở cuối)
+    {
+      path: '~/components/forms',
+      prefix: 'Form',
+      global: true,
+    },
+    // Layout components
+    // {
+    //   path: '~/layouts',
+    //   prefix: 'Layout',
+    //   global: true,
+    // },
+  ],
 
   // Thêm các script từ HTML gốc
   app: {
@@ -36,6 +98,7 @@ export default defineNuxtConfig({
         { rel: 'icon', href: '/favicon.ico' },
         { rel: 'stylesheet', href: '/css/style.css' },
       ],
+      script: [{ src: '/js/bundle.js' }],
     },
   },
 

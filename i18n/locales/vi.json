@@ -1,0 +1,35 @@
+{
+    "common": {
+        "or": "Hoặc",
+        "and": "và"
+    },
+    "auth": {
+        "subtitle": "Nền tảng nhân lực AI chất lượng cao",
+        "createAccountSubtitle": "Tạo tài khoản để bắt đầu hành trình của bạn",
+        "signIn": "Đăng nhập",
+        "signUp": "Đăng ký",
+        "signInWith": "Đăng nhập với {provider}",
+        "signUpWith": "Đăng ký với {provider}",
+        "forgotPassword": "Quên mật khẩu?",
+        "noAccount": "Chưa có tài khoản?",
+        "haveAccount": "Đã có tài khoản?",
+        "createAccount": "Tạo tài khoản",
+        "agreeToTerms": "Tôi đồng ý với",
+        "termsAndConditions": "Điều khoản và Điều kiện",
+        "privacyPolicy": "Chính sách Bảo mật"
+    },
+    "form": {
+        "email": "Email",
+        "emailPlaceholder": "Nhập email của bạn",
+        "password": "Mật khẩu",
+        "passwordPlaceholder": "Nhập mật khẩu của bạn",
+        "confirmPassword": "Xác nhận mật khẩu",
+        "confirmPasswordPlaceholder": "Nhập lại mật khẩu",
+        "fullName": "Họ và tên",
+        "fullNamePlaceholder": "Nhập họ và tên của bạn",
+        "username": "Tên đăng nhập",
+        "usernamePlaceholder": "Nhập tên đăng nhập",
+        "phone": "Số điện thoại",
+        "phonePlaceholder": "Nhập số điện thoại của bạn"
+    }
+}

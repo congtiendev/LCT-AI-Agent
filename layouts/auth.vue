@@ -1,6 +1,5 @@
 <template>
-  <div class="cyber-klever-container">
-    <!-- Cyberpunk Grid với màu KLEVERBOT -->
+  <div id="auth-layout" class="cyber-klever-container">
     <div class="klever-cyber-grid">
       <div class="cyber-lines"></div>
       <div class="neon-highlights">
@@ -11,33 +10,20 @@
     </div>
 
     <div class="cyber-main">
-      <!-- Futuristic Glassmorphism -->
       <div class="cyber-glass-panel">
         <div class="panel-border"></div>
         <div class="panel-content">
+          <UiLogo :url="'/images/logo/logo.png'" :logoClass="' w-[70%] h-auto mx-auto mb-5'" />
           <slot></slot>
         </div>
-      </div>
-
-      <!-- Cyber Toggle -->
-      <div class="cyber-control">
-        <button class="cyber-toggle" @click="darkMode = !darkMode">
-          <div class="toggle-circuit"></div>
-          <span class="toggle-label">{{ darkMode ? 'LIGHT' : 'DARK' }}</span>
-        </button>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      darkMode: false
-    }
-  }
-}
+<script setup lang="ts">
+import { ref, defineAsyncComponent } from 'vue'
+const darkMode = ref(false)
 </script>
 
 <style scoped>
