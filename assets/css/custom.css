@@ -1,0 +1,11 @@
+.background-gradient-primary {
+  background: linear-gradient(
+    135deg,
+    #4a90e2 0%,
+    #6b73d9 20%,
+    #8b5fbf 40%,
+    #a8508a 60%,
+    #c54756 80%,
+    #e53e3e 100%
+  );
+}

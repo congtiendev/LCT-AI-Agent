@@ -1,5 +1,6 @@
 @import url(https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&amp;display=swap)
 layer(base);
+
 svg {
   -ms-touch-action: none;
   touch-action: none;

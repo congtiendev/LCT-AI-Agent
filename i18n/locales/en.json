@@ -1,7 +1,17 @@
 {
     "common": {
         "or": "Or",
-        "and": "and"
+        "and": "and",
+        "pro": "Pro",
+        "loading": "Loading...",
+        "save": "Save",
+        "cancel": "Cancel",
+        "submit": "Submit",
+        "delete": "Delete",
+        "edit": "Edit",
+        "view": "View",
+        "close": "Close",
+        "confirm": "Confirm"
     },
     "auth": {
         "subtitle": "High-quality AI human resource platform",
@@ -31,5 +41,36 @@
         "usernamePlaceholder": "Enter your username",
         "phone": "Phone Number",
         "phonePlaceholder": "Enter your phone number"
+    },
+    "layout": {
+        "menu": {
+            "title": "MENU",
+            "dashboard": {
+                "title": "Dashboard",
+                "ecommerce": "eCommerce",
+                "analytics": "Analytics",
+                "marketing": "Marketing"
+            },
+            "calendar": "Calendar",
+            "profile": "User Profile",
+            "support": {
+                "title": "Support",
+                "chat": "Chat"
+            }
+        },
+        "search": {
+            "placeholder": "Search or type command..."
+        },
+        "notification": {
+            "title": "Notification",
+            "viewAll": "View All Notification"
+        },
+        "user": {
+            "defaultName": "User",
+            "defaultEmail": "user@example.com",
+            "editProfile": "Edit profile",
+            "accountSettings": "Account settings",
+            "signOut": "Sign out"
+        }
     }
 }

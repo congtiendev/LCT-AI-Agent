@@ -1,7 +1,17 @@
 {
     "common": {
         "or": "Hoặc",
-        "and": "và"
+        "and": "và",
+        "pro": "Pro",
+        "loading": "Đang tải...",
+        "save": "Lưu",
+        "cancel": "Hủy",
+        "submit": "Gửi",
+        "delete": "Xóa",
+        "edit": "Chỉnh sửa",
+        "view": "Xem",
+        "close": "Đóng",
+        "confirm": "Xác nhận"
     },
     "auth": {
         "subtitle": "Nền tảng nhân lực AI chất lượng cao",
@@ -31,5 +41,36 @@
         "usernamePlaceholder": "Nhập tên đăng nhập",
         "phone": "Số điện thoại",
         "phonePlaceholder": "Nhập số điện thoại của bạn"
+    },
+    "layout": {
+        "menu": {
+            "title": "MENU",
+            "dashboard": {
+                "title": "Bảng điều khiển",
+                "ecommerce": "Thương mại điện tử",
+                "analytics": "Phân tích",
+                "marketing": "Tiếp thị"
+            },
+            "calendar": "Lịch",
+            "profile": "Hồ sơ người dùng",
+            "support": {
+                "title": "Hỗ trợ",
+                "chat": "Trò chuyện"
+            }
+        },
+        "search": {
+            "placeholder": "Tìm kiếm hoặc nhập lệnh..."
+        },
+        "notification": {
+            "title": "Thông báo",
+            "viewAll": "Xem tất cả thông báo"
+        },
+        "user": {
+            "defaultName": "Người dùng",
+            "defaultEmail": "",
+            "editProfile": "Chỉnh sửa hồ sơ",
+            "accountSettings": "Cài đặt tài khoản",
+            "signOut": "Đăng xuất"
+        }
     }
 }

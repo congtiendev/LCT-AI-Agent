@@ -40,6 +40,7 @@ export default defineNuxtConfig({
 
   imports: {
     presets: ['vue', 'vue-router', 'vue-i18n'],
+    dirs: ['composables', 'composables/**'],
   },
 
   components: [
