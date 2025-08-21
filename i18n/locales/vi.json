@@ -1,4 +1,10 @@
 {
+    "base": {
+        "appName": "LCT AI Agent",
+        "appDescription": "Nền tảng AI mạnh mẽ cho doanh nghiệp",
+        "appKeywords": "AI, Machine Learning, Automation",
+        "appManagement": "Quản lý và tối ưu hóa các AI Agent của bạn"
+    },
     "common": {
         "or": "Hoặc",
         "and": "và",
@@ -18,6 +24,7 @@
         "createAccountSubtitle": "Tạo tài khoản để bắt đầu hành trình của bạn",
         "signIn": "Đăng nhập",
         "signUp": "Đăng ký",
+        "signOut": "Đăng xuất",
         "signInWith": "Đăng nhập với {provider}",
         "signUpWith": "Đăng ký với {provider}",
         "forgotPassword": "Quên mật khẩu?",
@@ -26,7 +33,9 @@
         "createAccount": "Tạo tài khoản",
         "agreeToTerms": "Tôi đồng ý với",
         "termsAndConditions": "Điều khoản và Điều kiện",
-        "privacyPolicy": "Chính sách Bảo mật"
+        "privacyPolicy": "Chính sách Bảo mật",
+        "signingIn": "Đang đăng nhập...",
+        "demoAccount": "Tài khoản demo"
     },
     "form": {
         "email": "Email",
@@ -72,5 +81,9 @@
             "accountSettings": "Cài đặt tài khoản",
             "signOut": "Đăng xuất"
         }
-    }
+    },
+    "agent": {
+        "activeAgents": "Các Agent đang hoạt động"
+    },
+    "welcomeBack": "Chào mừng trở lại"
 }

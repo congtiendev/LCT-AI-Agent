@@ -1,3 +1,4 @@
+<!-- components/auth/SignInForm.vue -->
 <template>
     <!-- Form -->
     <div class="flex flex-col flex-1 w-full">
@@ -9,8 +10,8 @@
                     </p>
                 </div>
                 <div>
-                    <button
-                        class="glass-social w-full inline-flex items-center justify-center gap-3 py-3 text-xs font-normal text-gray-100 transition-all duration-300 rounded-xl px-7  transform hover:-translate-y-1">
+                    <button @click="handleGoogleSignIn" :disabled="isLoading"
+                        class="glass-social w-full inline-flex items-center justify-center gap-3 py-3 text-xs font-normal text-gray-100 transition-all duration-300 rounded-xl px-7  transform hover:-translate-y-1 disabled:opacity-50">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M18.7511 10.1944C18.7511 9.47495 18.6915 8.94995 18.5626 8.40552H10.1797V11.6527H15.1003C15.0011 12.4597 14.4654 13.675 13.2749 14.4916L13.2582 14.6003L15.9087 16.6126L16.0924 16.6305C17.7788 15.1041 18.7511 12.8583 18.7511 10.1944Z"
@@ -34,25 +35,63 @@
                                 $t('common.or') }}</span>
                         <div class="w-full border-t border-gray-200/30 dark:border-gray-800/50"></div>
                     </div>
-                    <form>
+                    <form @submit.prevent="onSubmit">
                         <div class="space-y-5">
-                            <!-- Email -->
+                            <!-- Email/Phone Input -->
                             <div>
                                 <label class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400">
-                                    {{ $t('form.email') }}<span class="text-error-500">*</span>
+                                    {{ $t('form.emailOrPhone') }}<span class="text-error-500">*</span>
                                 </label>
-                                <input type="email" id="email" name="email" :placeholder="$t('form.emailPlaceholder')"
-                                    class="glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg px-4 py-2.5 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:placeholder:text-white/50 dark:focus:border-brand-800/50 transition-all duration-300" />
+                                <div class="relative">
+                                    <input :type="inputType" id="email" name="email" v-model="signInForm.email"
+                                        @input="onEmailInput" @blur="validateField('email')"
+                                        :placeholder="$t('form.emailOrPhonePlaceholder')" :class="[
+                                            'glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg px-4 py-2.5 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:placeholder:text-white/50 dark:focus:border-brand-800/50 transition-all duration-300',
+                                            hasFieldError('signIn', 'email') ? 'border-red-400/50 bg-red-500/5' : ''
+                                        ]" />
+
+                                    <!-- Input Type Indicator -->
+                                    <div v-if="signInForm.email && inputTypeInfo"
+                                        class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
+                                        <div :class="[
+                                            'px-2 py-1 rounded-full text-xs font-medium',
+                                            inputTypeInfo.valid
+                                                ? 'bg-green-500/20 text-green-400 border border-green-400/30'
+                                                : 'bg-orange-500/20 text-orange-400 border border-orange-400/30'
+                                        ]">
+                                            {{ inputTypeInfo.label }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Field Error -->
+                                <div v-if="getFieldError('signIn', 'email')" class="mt-1 text-sm text-red-400">
+                                    {{ getFieldError('signIn', 'email') }}
+                                </div>
+
+                                <!-- Input Hint -->
+                                <div v-if="signInForm.email && inputTypeInfo" class="mt-1 text-xs">
+                                    <span v-if="inputTypeInfo.valid" class="text-green-400">
+                                        ✓ {{ inputTypeInfo.message }}
+                                    </span>
+                                    <span v-else class="text-orange-400">
+                                        {{ inputTypeInfo.message }}
+                                    </span>
+                                </div>
                             </div>
+
                             <!-- Password -->
                             <div>
                                 <label class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400">
                                     {{ $t('form.password') }}<span class="text-error-500">*</span>
                                 </label>
                                 <div class="relative">
-                                    <input :type="showPassword ? 'text' : 'password'"
-                                        :placeholder="$t('form.passwordPlaceholder')"
-                                        class="glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg py-2.5 pl-4 pr-12 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:focus:border-brand-800/50 transition-all duration-300" />
+                                    <input :type="showPassword ? 'text' : 'password'" v-model="signInForm.password"
+                                        @input="onPasswordInput" @blur="validateField('password')"
+                                        :placeholder="$t('form.passwordPlaceholder')" :class="[
+                                            'glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg py-2.5 pl-4 pr-12 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:placeholder:text-white/50 dark:focus:border-brand-800/50 transition-all duration-300',
+                                            hasFieldError('signIn', 'password') ? 'border-red-400/50 bg-red-500/5' : ''
+                                        ]" />
                                     <button @click="showPassword = !showPassword" type="button"
                                         class="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full text-gray-400/80 hover:text-gray-600 hover:bg-white/10 dark:text-white/60 dark:hover:text-white/90 dark:hover:bg-white/5 transition-all duration-200 focus:outline-none">
                                         <svg v-if="!showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -69,29 +108,80 @@
                                         </svg>
                                     </button>
                                 </div>
+                                <div v-if="getFieldError('signIn', 'password')" class="mt-1 text-sm text-red-400">
+                                    {{ getFieldError('signIn', 'password') }}
+                                </div>
                             </div>
+
                             <!-- Checkbox -->
                             <div class="flex items-center justify-between">
-                                <a href="reset-password.html"
-                                    class="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400 transition-colors duration-200">{{
-                                        $t('auth.forgotPassword') }}</a>
+                                <NuxtLink to="/forgot-password"
+                                    class="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400 transition-colors duration-200">
+                                    {{ $t('auth.forgotPassword') }}
+                                </NuxtLink>
                             </div>
-                            <!-- Button -->
+
+                            <!-- Submit Button -->
                             <div>
-                                <button
-                                    class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
-                                    {{ $t('auth.signIn') }}
+                                <button type="submit" :disabled="isLoading || !canSubmit" :class="[
+                                    'flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg shadow-theme-xs',
+                                    isLoading || !canSubmit
+                                        ? 'bg-gray-500/50 cursor-not-allowed opacity-50'
+                                        : 'bg-brand-500 hover:bg-brand-600 glass-button'
+                                ]">
+                                    <svg v-if="isLoading" class="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                    <span v-if="isLoading">{{ $t('auth.signingIn') }}</span>
+                                    <span v-else>{{ $t('auth.signIn') }}</span>
                                 </button>
                             </div>
                         </div>
                     </form>
+
+                    <!-- Error Message -->
+                    <div v-if="error"
+                        class="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-400 text-sm backdrop-blur-sm">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            {{ error }}
+                        </div>
+                    </div>
+
+                    <!-- Demo Accounts Info -->
+                    <div
+                        class="mt-4 p-3 rounded-lg bg-blue-500/10 border border-blue-400/30 text-blue-300 text-xs backdrop-blur-sm">
+                        <h4 class="font-medium mb-2 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            {{ $t('auth.demoAccount') }}
+                        </h4>
+                        <div class="space-y-1 text-blue-200/80">
+                            <p><strong>Admin:</strong> admin@example.com / 0987654321</p>
+                            <p><strong>User:</strong> user@example.com / 0123456789</p>
+                            <p><strong>{{ $t('auth.password') }}:</strong> 0123456789</p>
+                        </div>
+                    </div>
+
                     <div class="mt-5 flex items-center justify-center">
                         <p class="text-sm font-normal text-center text-gray-100 dark:text-gray-400 sm:text-start">
                             {{ $t('auth.noAccount') }}
-                            <RouterLink to="/sign-up"
+                            <NuxtLink to="/sign-up"
                                 class="text-brand-500 hover:text-brand-600 dark:text-brand-400 transition-colors duration-200">
-                                {{
-                                    $t('auth.signUp') }}</RouterLink>
+                                {{ $t('auth.signUp') }}
+                            </NuxtLink>
                         </p>
                     </div>
                 </div>
@@ -100,14 +190,100 @@
     </div>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            showPassword: false
-        }
+<script setup lang="ts">
+import { getInputType, isEmail, isPhone } from '~/utils/validation'
+
+const {
+    signInForm,
+    isLoading,
+    error,
+    handleSignIn,
+    handleGoogleSignIn,
+    validateSignInForm,
+    getFieldError,
+    hasFieldError,
+    clearFieldError
+} = useAuth()
+
+const showPassword = ref(false)
+
+// Detect input type and provide feedback
+const inputTypeInfo = computed(() => {
+    if (!signInForm.value.email) return null
+
+    const input = signInForm.value.email.trim()
+    const type = getInputType(input)
+
+    switch (type) {
+        case 'email':
+            return {
+                valid: true,
+                label: 'Email',
+                message: 'Email hợp lệ'
+            }
+        case 'phone':
+            return {
+                valid: true,
+                label: 'SĐT',
+                message: 'Số điện thoại hợp lệ'
+            }
+        default:
+            return {
+                valid: false,
+                label: '?',
+                message: 'Nhập email hoặc số điện thoại (VD: 0987654321)'
+            }
     }
+})
+
+// Dynamic input type for better mobile experience
+const inputType = computed(() => {
+    if (!signInForm.value.email) return 'text'
+
+    const type = getInputType(signInForm.value.email)
+    if (type === 'phone') return 'tel'
+    if (type === 'email') return 'email'
+    return 'text'
+})
+
+// Check if form can be submitted
+const canSubmit = computed(() => {
+    return signInForm.value.email.length > 0 &&
+        signInForm.value.password.length >= 6 &&
+        inputTypeInfo.value?.valid
+})
+
+// Handle email/phone input changes
+const onEmailInput = () => {
+    clearFieldError('signIn', 'email')
 }
+
+// Handle password input changes
+const onPasswordInput = () => {
+    clearFieldError('signIn', 'password')
+}
+
+// Validate individual field
+const validateField = (field: string) => {
+    validateSignInForm()
+}
+
+// Handle form submission
+const onSubmit = async () => {
+    if (!validateSignInForm()) {
+        return
+    }
+
+    await handleSignIn()
+}
+
+// Auto-focus first input on mount
+onMounted(() => {
+    const emailInput = document.getElementById('email')
+    if (emailInput) {
+        emailInput.focus()
+    }
+})
 </script>
 
 <style scoped>
@@ -157,11 +333,12 @@ export default {
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.glass-button:hover {
+.glass-button:hover:not(:disabled) {
     box-shadow:
         0 12px 40px rgba(59, 130, 246, 0.4),
         0 0 0 1px rgba(255, 255, 255, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
 }
 
 .glass-social {
@@ -172,7 +349,7 @@ export default {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.glass-social:hover {
+.glass-social:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.08);
     box-shadow:
         0 6px 25px rgba(0, 0, 0, 0.12),
@@ -198,7 +375,38 @@ export default {
     background: rgba(255, 255, 255, 0.02);
 }
 
-.dark .glass-social:hover {
+.dark .glass-social:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.05);
+}
+
+/* Input error states */
+.glass-input.border-red-400\/50 {
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.glass-input.border-red-400\/50:focus {
+    background: rgba(239, 68, 68, 0.08);
+    box-shadow:
+        0 0 0 3px rgba(239, 68, 68, 0.15),
+        0 8px 32px rgba(239, 68, 68, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Animation for input type indicator */
+.glass-input+div .absolute {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 </style>

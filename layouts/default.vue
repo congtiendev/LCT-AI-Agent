@@ -9,7 +9,7 @@
 
         <!-- Sidebar -->
         <aside :class="[
-            'sidebar fixed top-0 left-0 z-[9999] flex h-screen w-[290px] flex-col overflow-y-auto border-r bg-white px-5 transition-all duration-300 lg:static lg:translate-x-0',
+            'sidebar fixed top-0 left-0 z-[9998] flex h-screen w-[290px] flex-col overflow-y-auto border-r bg-white px-5 transition-all duration-300 lg:static lg:translate-x-0',
             'border-gray-200 dark:border-gray-800 dark:bg-gray-900',
             sidebarOpen ? 'translate-x-0 lg:w-[90px]' : '-translate-x-full'
         ]">
@@ -98,9 +98,10 @@
                                                     <!-- Badge -->
                                                     <span v-if="child.badge"
                                                         class="absolute right-3 flex items-center gap-1">
-                                                        <span class="rounded px-1.5 py-0.5 text-xs font-medium" :class="$route.name === child.id
-                                                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                                                            : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'">
+                                                        <span class="rounded px-1.5 py-0.5 text-xs font-medium"
+                                                            :class="$route.name === child.id
+                                                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                                                : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'">
                                                             {{ child.badge.text }}
                                                         </span>
                                                     </span>
@@ -149,7 +150,7 @@
             <main>
                 <!-- Header -->
                 <header
-                    class="sticky top-0 z-[99999] flex w-full bg-white border-gray-200 lg:border-b dark:border-gray-800 dark:bg-gray-900">
+                    class="sticky top-0 z-[9998] flex w-full bg-white border-gray-200 lg:border-b dark:border-gray-800 dark:bg-gray-900">
                     <div class="flex grow flex-col items-center justify-between lg:flex-row lg:px-6">
                         <div
                             class="flex w-full items-center justify-between gap-2 border-b border-gray-200 px-3 py-3 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4 dark:border-gray-800">
@@ -311,7 +312,7 @@
                                                             class="text-sm mb-1.5 block text-gray-500 dark:text-gray-400">
                                                             <span
                                                                 class="font-medium text-gray-800 dark:text-white/90">{{
-                                                                notification.user.name }}</span>
+                                                                    notification.user.name }}</span>
                                                             {{ notification.message }}
                                                         </span>
                                                         <span
@@ -338,31 +339,29 @@
                                 <button class="flex items-center text-gray-700 dark:text-gray-400"
                                     @click="toggleUserDropdown">
                                     <span class="mr-3 h-11 w-11 overflow-hidden rounded-full">
-                                        <img :src="user?.avatar || '/images/user/owner.jpg'"
-                                            :alt="user?.name || 'User'" />
+                                        <img :src="user?.avatar || '/images/avatars/chatbot.png'"
+                                            :alt="user?.fullName || 'unknown'" />
                                     </span>
-                                    <span class="text-sm mr-1 block font-medium">
-                                        {{ user?.name || 'John Doe' }}
-                                    </span>
-                                    <svg :class="userDropdown.isOpen.value && 'rotate-180'"
-                                        class="stroke-gray-500 dark:stroke-gray-400" width="18" height="20"
-                                        viewBox="0 0 18 20" fill="none">
-                                        <path d="M4.3125 8.65625L9 13.3437L13.6875 8.65625" stroke="" stroke-width="1.5"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
                                 </button>
 
                                 <!-- User Dropdown -->
                                 <div v-if="userDropdown.isOpen.value"
                                     class="shadow-lg dark:bg-gray-900 absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 dark:border-gray-800">
-                                    <div>
-                                        <span class="text-sm block font-medium text-gray-700 dark:text-gray-400">
-                                            {{ user?.name || 'John Doe' }}
+                                    <div class="flex">
+                                        <span class="mr-3 h-11 w-11 overflow-hidden rounded-full">
+                                            <img :src="user?.avatar || '/images/avatars/chatbot.png'"
+                                                :alt="user?.fullName || 'unknown'" />
                                         </span>
-                                        <span class="text-xs mt-0.5 block text-gray-500 dark:text-gray-400">
-                                            {{ user?.email || 'john@example.com' }}
-                                        </span>
+                                        <div>
+                                            <span class="text-sm block font-medium text-gray-700 dark:text-gray-400">
+                                                {{ user?.username || 'Unknown' }}
+                                            </span>
+                                            <span class="text-xs mt-0.5 block text-gray-500 dark:text-gray-400">
+                                                {{ user?.email }}
+                                            </span>
+                                        </div>
                                     </div>
+
 
                                     <ul
                                         class="flex flex-col gap-1 border-b border-gray-200 pt-4 pb-3 dark:border-gray-800">
@@ -370,39 +369,45 @@
                                             <NuxtLink to="/profile"
                                                 class="group text-sm flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                 @click="userDropdown.close()">
-                                                <svg class="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
-                                                    width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                        d="M12 3.5C7.30558 3.5 3.5 7.30558 3.5 12C3.5 14.1526 4.3002 16.1184 5.61936 17.616C6.17279 15.3096 8.24852 13.5955 10.7246 13.5955H13.2746C15.7509 13.5955 17.8268 15.31 18.38 17.6167C19.6996 16.119 20.5 14.153 20.5 12C20.5 7.30558 16.6944 3.5 12 3.5Z"
-                                                        fill="" />
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="lucide lucide-circle-user-round-icon lucide-circle-user-round text-gray-400">
+                                                    <path d="M18 20a6 6 0 0 0-12 0" />
+                                                    <circle cx="12" cy="10" r="4" />
+                                                    <circle cx="12" cy="12" r="10" />
                                                 </svg>
-                                                Edit Profile
+                                                {{ $t('layout.user.editProfile') }}
                                             </NuxtLink>
                                         </li>
                                         <li>
                                             <NuxtLink to="/settings"
                                                 class="group text-sm flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                                                 @click="userDropdown.close()">
-                                                <svg class="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
-                                                    width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                        d="M10.4858 3.5L13.5182 3.5C13.9233 3.5 14.2518 3.82851 14.2518 4.23377C14.2518 5.9529 16.1129 7.02795 17.602 6.1682C17.9528 5.96567 18.4014 6.08586 18.6039 6.43667L20.1203 9.0631C20.3229 9.41407 20.2027 9.86286 19.8517 10.0655C18.3625 10.9253 18.3625 13.0747 19.8517 13.9345C20.2026 14.1372 20.3229 14.5859 20.1203 14.9369L18.6039 17.5634C18.4013 17.9142 17.9528 18.0344 17.602 17.8318C16.1129 16.9721 14.2518 18.0471 14.2518 19.7663C14.2518 20.1715 13.9233 20.5 13.5182 20.5H10.4858C10.0804 20.5 9.75182 20.1714 9.75182 19.766C9.75182 18.0461 7.88983 16.9717 6.40067 17.8314C6.04945 18.0342 5.60037 17.9139 5.39767 17.5628L3.88167 14.937C3.67903 14.586 3.79928 14.1372 4.15026 13.9346C5.63949 13.0748 5.63946 10.9253 4.15025 10.0655C3.79926 9.86282 3.67901 9.41401 3.88165 9.06303L5.39764 6.43725C5.60034 6.08617 6.04943 5.96581 6.40065 6.16858C7.88982 7.02836 9.75182 5.9539 9.75182 4.23399C9.75182 3.82862 10.0804 3.5 10.4858 3.5Z"
-                                                        fill="" />
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="lucide lucide-settings-icon lucide-settings text-gray-400">
+                                                    <path
+                                                        d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+                                                    <circle cx="12" cy="12" r="3" />
                                                 </svg>
-                                                Account Settings
+                                                {{ $t('layout.user.accountSettings') }}
                                             </NuxtLink>
                                         </li>
                                     </ul>
 
-                                    <button @click="logout"
+                                    <button @click="handleLogout"
                                         class="group text-sm mt-3 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                                        <svg class="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
-                                            width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                                d="M15.1007 19.247C14.6865 19.247 14.3507 18.9112 14.3507 18.497L14.3507 14.245H12.8507V18.497C12.8507 19.7396 13.8581 20.747 15.1007 20.747H18.5007C19.7434 20.747 20.7507 19.7396 20.7507 18.497L20.7507 5.49609C20.7507 4.25345 19.7433 3.24609 18.5007 3.24609H15.1007C13.8581 3.24609 12.8507 4.25345 12.8507 5.49609V9.74501L14.3507 9.74501V5.49609C14.3507 5.08188 14.6865 4.74609 15.1007 4.74609L18.5007 4.74609C18.9149 4.74609 19.2507 5.08188 19.2507 5.49609L19.2507 18.497C19.2507 18.9112 18.9149 19.247 18.5007 19.247H15.1007Z"
-                                                fill="" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-log-out-icon lucide-log-out text-gray-400">
+                                            <path d="m16 17 5-5-5-5" />
+                                            <path d="M21 12H9" />
+                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                                         </svg>
-                                        Sign Out
+                                        {{ $t('auth.signOut') }}
                                     </button>
                                 </div>
                             </div>
@@ -450,9 +455,10 @@ const {
     setUserPermissions,
     hasPermission
 } = useMenu()
+const { user, isAuthenticated, userDisplayName, handleLogout } = useAuth()
+
 const { searchQuery, handleSearch } = useSearch()
 const { hasNotifications, notifications, markAsRead } = useNotifications()
-const { user, logout } = useUser()
 const { isLoaded, hidePreloader } = usePreloader()
 
 // Template refs
@@ -497,12 +503,6 @@ setupClickOutside(
 onMounted(() => {
     initializeDarkMode()
     hidePreloader()
-
-    // Example: Set user permissions (bạn sẽ thay thế bằng logic thực tế)
-    // setUserPermissions(['dashboard.view', 'analytics.view', 'marketing.view', 'chat.access'])
-
-    // Để mặc định hiển thị tất cả, không cần set permissions
-    // Vì tất cả đều có permission: true hoặc sẽ được filter
 })
 </script>
 

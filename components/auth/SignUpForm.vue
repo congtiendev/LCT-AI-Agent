@@ -1,3 +1,4 @@
+<!-- components/auth/SignUpForm.vue -->
 <template>
     <!-- Form -->
     <div class="flex flex-col flex-1 w-full">
@@ -9,8 +10,8 @@
                     </p>
                 </div>
                 <div>
-                    <button
-                        class="glass-social w-full inline-flex items-center justify-center gap-3 py-3 text-xs font-normal text-gray-100 transition-all duration-300 rounded-xl px-7  transform hover:-translate-y-1">
+                    <button @click="handleGoogleSignIn" :disabled="isLoading"
+                        class="glass-social w-full inline-flex items-center justify-center gap-3 py-3 text-xs font-normal text-gray-100 transition-all duration-300 rounded-xl px-7  transform hover:-translate-y-1 disabled:opacity-50">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M18.7511 10.1944C18.7511 9.47495 18.6915 8.94995 18.5626 8.40552H10.1797V11.6527H15.1003C15.0011 12.4597 14.4654 13.675 13.2749 14.4916L13.2582 14.6003L15.9087 16.6126L16.0924 16.6305C17.7788 15.1041 18.7511 12.8583 18.7511 10.1944Z"
@@ -34,7 +35,7 @@
                                 $t('common.or') }}</span>
                         <div class="w-full border-t border-gray-200/30 dark:border-gray-800/50"></div>
                     </div>
-                    <form>
+                    <form @submit.prevent="onSubmit">
                         <div class="space-y-5">
                             <!-- Full Name & Username - 2 columns on desktop -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -43,9 +44,12 @@
                                     <label class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400">
                                         {{ $t('form.fullName') }}<span class="text-error-500">*</span>
                                     </label>
-                                    <input type="text" id="fullName" name="fullName"
-                                        :placeholder="$t('form.fullNamePlaceholder')"
+                                    <input type="text" id="fullName" name="fullName" v-model="signUpForm.fullName"
+                                        @blur="validateField('fullName')" :placeholder="$t('form.fullNamePlaceholder')"
                                         class="glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg px-4 py-2.5 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:placeholder:text-white/50 dark:focus:border-brand-800/50 transition-all duration-300" />
+                                    <div v-if="getFieldError('signUp', 'fullName')" class="mt-1 text-sm text-red-400">
+                                        {{ getFieldError('signUp', 'fullName') }}
+                                    </div>
                                 </div>
 
                                 <!-- Username -->
@@ -53,9 +57,12 @@
                                     <label class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400">
                                         {{ $t('form.username') }}<span class="text-error-500">*</span>
                                     </label>
-                                    <input type="text" id="username" name="username"
-                                        :placeholder="$t('form.usernamePlaceholder')"
+                                    <input type="text" id="username" name="username" v-model="signUpForm.username"
+                                        @blur="validateField('username')" :placeholder="$t('form.usernamePlaceholder')"
                                         class="glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg px-4 py-2.5 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:placeholder:text-white/50 dark:focus:border-brand-800/50 transition-all duration-300" />
+                                    <div v-if="getFieldError('signUp', 'username')" class="mt-1 text-sm text-red-400">
+                                        {{ getFieldError('signUp', 'username') }}
+                                    </div>
                                 </div>
                             </div>
 
@@ -66,9 +73,12 @@
                                     <label class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400">
                                         {{ $t('form.email') }}<span class="text-error-500">*</span>
                                     </label>
-                                    <input type="email" id="email" name="email"
-                                        :placeholder="$t('form.emailPlaceholder')"
+                                    <input type="email" id="email" name="email" v-model="signUpForm.email"
+                                        @blur="validateField('email')" :placeholder="$t('form.emailPlaceholder')"
                                         class="glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg px-4 py-2.5 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:placeholder:text-white/50 dark:focus:border-brand-800/50 transition-all duration-300" />
+                                    <div v-if="getFieldError('signUp', 'email')" class="mt-1 text-sm text-red-400">
+                                        {{ getFieldError('signUp', 'email') }}
+                                    </div>
                                 </div>
 
                                 <!-- Phone -->
@@ -76,8 +86,12 @@
                                     <label class="mb-1.5 block text-sm font-medium text-gray-100 dark:text-gray-400">
                                         {{ $t('form.phone') }}<span class="text-error-500">*</span>
                                     </label>
-                                    <input type="tel" id="phone" name="phone" :placeholder="$t('form.phonePlaceholder')"
+                                    <input type="tel" id="phone" name="phone" v-model="signUpForm.phone"
+                                        @blur="validateField('phone')" :placeholder="$t('form.phonePlaceholder')"
                                         class="glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg px-4 py-2.5 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:placeholder:text-white/50 dark:focus:border-brand-800/50 transition-all duration-300" />
+                                    <div v-if="getFieldError('signUp', 'phone')" class="mt-1 text-sm text-red-400">
+                                        {{ getFieldError('signUp', 'phone') }}
+                                    </div>
                                 </div>
                             </div>
 
@@ -90,6 +104,7 @@
                                     </label>
                                     <div class="relative">
                                         <input :type="showPassword ? 'text' : 'password'" id="password" name="password"
+                                            v-model="signUpForm.password" @blur="validateField('password')"
                                             :placeholder="$t('form.passwordPlaceholder')"
                                             class="glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg py-2.5 pl-4 pr-12 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:focus:border-brand-800/50 transition-all duration-300" />
                                         <button @click="showPassword = !showPassword" type="button"
@@ -108,6 +123,9 @@
                                             </svg>
                                         </button>
                                     </div>
+                                    <div v-if="getFieldError('signUp', 'password')" class="mt-1 text-sm text-red-400">
+                                        {{ getFieldError('signUp', 'password') }}
+                                    </div>
                                 </div>
 
                                 <!-- Confirm Password -->
@@ -117,7 +135,9 @@
                                     </label>
                                     <div class="relative">
                                         <input :type="showConfirmPassword ? 'text' : 'password'" id="confirmPassword"
-                                            name="confirmPassword" :placeholder="$t('form.confirmPasswordPlaceholder')"
+                                            name="confirmPassword" v-model="signUpForm.confirmPassword"
+                                            @blur="validateField('confirmPassword')"
+                                            :placeholder="$t('form.confirmPasswordPlaceholder')"
                                             class="glass-input h-11 w-full rounded-xl border border-white/20 bg-white/5 backdrop-blur-lg py-2.5 pl-4 pr-12 text-sm text-gray-800 shadow-lg placeholder:text-gray-400/80 focus:border-brand-300/50 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 focus:bg-white/10 dark:border-gray-700/30 dark:bg-white/5 text-white dark:focus:border-brand-800/50 transition-all duration-300" />
                                         <button @click="showConfirmPassword = !showConfirmPassword" type="button"
                                             class="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full text-gray-400/80 hover:text-gray-600 hover:bg-white/10 dark:text-white/60 dark:hover:text-white/90 dark:hover:bg-white/5 transition-all duration-200 focus:outline-none">
@@ -135,12 +155,17 @@
                                             </svg>
                                         </button>
                                     </div>
+                                    <div v-if="getFieldError('signUp', 'confirmPassword')"
+                                        class="mt-1 text-sm text-red-400">
+                                        {{ getFieldError('signUp', 'confirmPassword') }}
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Terms and Conditions - Full width -->
                             <div class="flex items-start">
-                                <input type="checkbox" id="agreeTerms" name="agreeTerms"
+                                <input type="checkbox" id="agreeTerms" name="agreeTerms" v-model="signUpForm.agreeTerms"
+                                    @change="validateField('agreeTerms')"
                                     class="mt-1 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
                                 <label for="agreeTerms" class="ml-3 text-sm text-gray-100 dark:text-gray-400">
                                     {{ $t('auth.agreeToTerms') }}
@@ -153,23 +178,41 @@
                                             $t('auth.privacyPolicy') }}</a>
                                 </label>
                             </div>
+                            <div v-if="getFieldError('signUp', 'agreeTerms')" class="mt-1 text-sm text-red-400">
+                                {{ getFieldError('signUp', 'agreeTerms') }}
+                            </div>
 
                             <!-- Button - Full width -->
                             <div>
-                                <button
-                                    class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
-                                    {{ $t('auth.createAccount') }}
+                                <button type="submit" :disabled="isLoading"
+                                    class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600 disabled:opacity-50">
+                                    <svg v-if="isLoading" class="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                    {{ isLoading ? 'Đang tạo tài khoản...' : $t('auth.createAccount') }}
                                 </button>
                             </div>
                         </div>
                     </form>
+
+                    <!-- Error Message -->
+                    <div v-if="error"
+                        class="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-400/30 text-red-400 text-sm">
+                        {{ error }}
+                    </div>
+
                     <div class="mt-5 flex items-center justify-center">
                         <p class="text-sm font-normal text-center text-gray-100 dark:text-gray-400 sm:text-start">
                             {{ $t('auth.haveAccount') }}
                             <RouterLink to="/sign-in"
                                 class="text-brand-500 hover:text-brand-600 dark:text-brand-400 transition-colors duration-200">
-                                {{
-                                    $t('auth.signIn') }}</RouterLink>
+                                {{ $t('auth.signIn') }}
+                            </RouterLink>
                         </p>
                     </div>
                 </div>
@@ -178,14 +221,28 @@
     </div>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            showPassword: false,
-            showConfirmPassword: false
-        }
-    }
+<script setup lang="ts">
+const {
+    signUpForm,
+    isLoading,
+    error,
+    handleSignUp,
+    handleGoogleSignIn,
+    validateSignUpForm,
+    getFieldError
+} = useAuth()
+
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+
+// Validate individual field
+const validateField = (field: string) => {
+    validateSignUpForm()
+}
+
+// Handle form submission
+const onSubmit = async () => {
+    await handleSignUp()
 }
 </script>
 

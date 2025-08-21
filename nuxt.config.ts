@@ -18,7 +18,13 @@ export default defineNuxtConfig({
   googleFonts: {
     families: {
       Inter: [400, 500, 600, 700],
+      K2D: {
+        wght: [100, 200, 300, 400, 500, 600, 700, 800],
+        ital: [100, 200, 300, 400, 500, 600, 700, 800],
+      },
     },
+    display: 'swap',
+    preload: true,
   },
 
   i18n: {
