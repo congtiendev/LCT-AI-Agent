@@ -1,9 +1,27 @@
 <template>
     <div class="flex h-screen overflow-hidden" :class="{ 'dark': isDarkMode }">
-        <!-- Preloader -->
+        <!-- KLEVERBOT Preloader -->
         <div v-if="isLoaded"
-            class="fixed left-0 top-0 z-[999999] flex h-screen w-screen items-center justify-center bg-white dark:bg-black">
-            <div class="h-16 w-16 animate-spin rounded-full border-4 border-solid border-blue-500 border-t-transparent">
+            class="fixed left-0 top-0 z-[999999] flex h-screen w-screen items-center justify-center transition-colors duration-200"
+            :class="isDarkMode ? 'bg-gray-900' : 'bg-white'">
+            <div class="loading-container">
+                <div class="loading-text">
+                    <span>K</span>
+                    <span>L</span>
+                    <span>E</span>
+                    <span>V</span>
+                    <span>E</span>
+                    <span>R</span>
+                    <span>B</span>
+                    <span>O</span>
+                    <span>T</span>
+                </div>
+
+                <div class="loading-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
             </div>
         </div>
 
@@ -36,10 +54,10 @@
                             <span class="menu-group-title" :class="sidebarOpen ? 'lg:hidden' : ''">
                                 {{ group.title }}
                             </span>
-                            <svg v-if="group.icon" :class="sidebarOpen ? 'lg:block hidden' : 'hidden'"
+                            <span v-if="group.icon" :class="sidebarOpen ? 'lg:block hidden' : 'hidden'"
                                 class="menu-group-icon mx-auto fill-current" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" v-html="getIcon(group.icon)">
-                            </svg>
+                            </span>
                         </h3>
 
                         <!-- Group Items -->
@@ -89,7 +107,7 @@
                                             <li v-for="child in item.children" :key="child.id">
                                                 <NuxtLink :to="child.route || '#'"
                                                     class="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 relative group"
-                                                    :class="$route.name === child.id
+                                                    :class="isMenuActive(child.id)
                                                         ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
                                                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300'">
 
@@ -99,7 +117,7 @@
                                                     <span v-if="child.badge"
                                                         class="absolute right-3 flex items-center gap-1">
                                                         <span class="rounded px-1.5 py-0.5 text-xs font-medium"
-                                                            :class="$route.name === child.id
+                                                            :class="isMenuActive(child.id)
                                                                 ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                                                                 : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'">
                                                             {{ child.badge.text }}
@@ -362,7 +380,6 @@
                                         </div>
                                     </div>
 
-
                                     <ul
                                         class="flex flex-col gap-1 border-b border-gray-200 pt-4 pb-3 dark:border-gray-800">
                                         <li>
@@ -377,7 +394,7 @@
                                                     <circle cx="12" cy="10" r="4" />
                                                     <circle cx="12" cy="12" r="10" />
                                                 </svg>
-                                                {{ $t('layout.user.editProfile') }}
+                                                Edit Profile
                                             </NuxtLink>
                                         </li>
                                         <li>
@@ -392,7 +409,7 @@
                                                         d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
                                                     <circle cx="12" cy="12" r="3" />
                                                 </svg>
-                                                {{ $t('layout.user.accountSettings') }}
+                                                Account Settings
                                             </NuxtLink>
                                         </li>
                                     </ul>
@@ -407,7 +424,7 @@
                                             <path d="M21 12H9" />
                                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                                         </svg>
-                                        {{ $t('auth.signOut') }}
+                                        Sign Out
                                     </button>
                                 </div>
                             </div>
@@ -455,7 +472,14 @@ const {
     setUserPermissions,
     hasPermission
 } = useMenu()
-const { user, isAuthenticated, userDisplayName, handleLogout } = useAuth()
+
+// Mock user data - replace with real auth
+const user = ref({
+    username: 'John Doe',
+    email: 'john@example.com',
+    avatar: '/images/avatars/avatar.png',
+    fullName: 'John Doe'
+})
 
 const { searchQuery, handleSearch } = useSearch()
 const { hasNotifications, notifications, markAsRead } = useNotifications()
@@ -480,6 +504,15 @@ const toggleNotifications = (): void => {
 // Handle user dropdown toggle
 const toggleUserDropdown = (): void => {
     userDropdown.toggle()
+}
+
+// Mock logout function
+const handleLogout = async (): Promise<void> => {
+    try {
+        console.log('Logging out...')
+    } catch (error) {
+        console.error('Logout failed:', error)
+    }
 }
 
 // Setup click outside for dropdowns
@@ -507,6 +540,214 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* KLEVERBOT Loading Styles */
+.loading-container {
+    text-align: center;
+    padding: 2rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.loading-text {
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.1em;
+    margin-bottom: 2rem;
+    font-family: 'Audiowide', sans-serif !important;
+}
+
+.loading-text span {
+    display: inline-block;
+    background: linear-gradient(90deg,
+            #4a90e2 0%,
+            #4a90e2 11%,
+            #5c7dd8 22%,
+            #6f6bce 33%,
+            #8159c4 44%,
+            #9347ba 55%,
+            #b233a3 66%,
+            #d42c7a 77%,
+            #e53e3e 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: bounce 1.4s infinite ease-in-out, gradientShift 3s infinite ease-in-out;
+    transform-origin: center bottom;
+}
+
+/* Staggered animation delays for each letter */
+.loading-text span:nth-child(1) {
+    animation-delay: 0s, 0s;
+}
+
+.loading-text span:nth-child(2) {
+    animation-delay: 0.1s, 0.3s;
+}
+
+.loading-text span:nth-child(3) {
+    animation-delay: 0.2s, 0.6s;
+}
+
+.loading-text span:nth-child(4) {
+    animation-delay: 0.3s, 0.9s;
+}
+
+.loading-text span:nth-child(5) {
+    animation-delay: 0.4s, 1.2s;
+}
+
+.loading-text span:nth-child(6) {
+    animation-delay: 0.5s, 1.5s;
+}
+
+.loading-text span:nth-child(7) {
+    animation-delay: 0.6s, 1.8s;
+}
+
+.loading-text span:nth-child(8) {
+    animation-delay: 0.7s, 2.1s;
+}
+
+.loading-text span:nth-child(9) {
+    animation-delay: 0.8s, 2.4s;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-20px) scale(1.05);
+    }
+}
+
+@keyframes gradientShift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.loading-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: linear-gradient(90deg,
+            #4a90e2 0%,
+            /* K - xanh dương sáng */
+            #4a90e2 11%,
+            /* L - xanh dương sáng */
+            #5c7dd8 22%,
+            /* E - xanh dương */
+            #6f6bce 33%,
+            /* V - tím xanh */
+            #8159c4 44%,
+            /* E - tím */
+            #9347ba 55%,
+            /* R - tím đậm */
+            #b233a3 66%,
+            /* B - tím hồng */
+            #d42c7a 77%,
+            /* O - đỏ hồng */
+            #e53e3e 100%
+            /* T - đỏ cam */
+        );
+    animation: dotPulse 1.5s infinite ease-in-out;
+}
+
+.dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes dotPulse {
+
+    0%,
+    100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-top: 2rem;
+    opacity: 0.8;
+    animation: fadeInOut 2s infinite ease-in-out;
+    font-family: 'Audiowide', sans-serif;
+    transition: color 0.2s ease-in-out;
+}
+
+/* Dynamic color based on theme */
+.dark .subtitle {
+    color: #8892b0;
+}
+
+:not(.dark) .subtitle {
+    color: #64748b;
+}
+
+@keyframes fadeInOut {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Responsive design for loading */
+@media (max-width: 768px) {
+    .loading-text {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .loading-text {
+        font-size: 2rem;
+    }
+}
+
 /* Custom scrollbar styles */
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;

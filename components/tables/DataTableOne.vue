@@ -236,6 +236,9 @@ const filteredData = computed(() => {
             const aVal = a[sortColumn.value]
             const bVal = b[sortColumn.value]
 
+            if (aVal == null && bVal == null) return 0
+            if (aVal == null) return -1 * modifier
+            if (bVal == null) return 1 * modifier
             if (aVal < bVal) return -1 * modifier
             if (aVal > bVal) return 1 * modifier
             return 0

@@ -55,46 +55,38 @@ export const useMenu = (): MenuState => {
       id: 'main',
       title: 'MENU',
       icon: 'dots',
-      permission: true, // Mặc định hiển thị
+      permission: true,
       items: [
         {
           id: 'dashboard',
           label: 'Dashboard',
           icon: 'dashboard',
+          route: '/',
+          type: 'link',
+          permission: 'dashboard.view',
+        },
+        {
+          id: 'ai-agent-management',
+          label: 'AI Agent',
+          icon: 'bot',
           type: 'dropdown',
-          permission: 'dashboard.view', // Có thể dùng string
+          permission: true,
           children: [
             {
-              id: 'ecommerce',
-              label: 'E-commerce',
+              id: 'ai-agent-index',
+              label: 'Agent Management',
               icon: '',
               type: 'link',
-              route: '/ecommerce',
-              permission: true, // Mặc định hiển thị
+              route: '/ai-agent',
+              permission: true,
             },
             {
-              id: 'analytics',
-              label: 'Analytics',
+              id: 'ai-agent-create',
+              label: 'Create Agent',
               icon: '',
               type: 'link',
-              route: '/analytics',
-              permission: ['analytics.view', 'pro.access'], // Có thể dùng array
-              badge: {
-                text: 'Pro',
-                color: 'blue',
-              },
-            },
-            {
-              id: 'marketing',
-              label: 'Marketing',
-              icon: '',
-              type: 'link',
-              route: '/marketing',
-              permission: 'marketing.view',
-              badge: {
-                text: 'Pro',
-                color: 'blue',
-              },
+              route: '/ai-agent/create',
+              permission: true,
             },
           ],
         },
@@ -104,14 +96,14 @@ export const useMenu = (): MenuState => {
           icon: 'user',
           type: 'link',
           route: '/profile',
-          permission: true, // Mặc định hiển thị
+          permission: true,
         },
       ],
     },
     {
       id: 'support',
       title: 'SUPPORT',
-      permission: true, // Mặc định hiển thị
+      permission: true,
       items: [
         {
           id: 'chat',
@@ -134,13 +126,55 @@ export const useMenu = (): MenuState => {
     user: `<path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.5C7.30558 3.5 3.5 7.30558 3.5 12C3.5 14.1526 4.3002 16.1184 5.61936 17.616C6.17279 15.3096 8.24852 13.5955 10.7246 13.5955H13.2746C15.7509 13.5955 17.8268 15.31 18.38 17.6167C19.6996 16.119 20.5 14.153 20.5 12C20.5 7.30558 16.6944 3.5 12 3.5ZM17.0246 18.8566V18.8455C17.0246 16.7744 15.3457 15.0955 13.2746 15.0955H10.7246C8.65354 15.0955 6.97461 16.7744 6.97461 18.8455V18.856C8.38223 19.8895 10.1198 20.5 12 20.5C13.8798 20.5 15.6171 19.8898 17.0246 18.8566ZM2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12ZM11.9991 7.25C10.8847 7.25 9.98126 8.15342 9.98126 9.26784C9.98126 10.3823 10.8847 11.2857 11.9991 11.2857C13.1135 11.2857 14.0169 10.3823 14.0169 9.26784C14.0169 8.15342 13.1135 7.25 11.9991 7.25ZM8.48126 9.26784C8.48126 7.32499 10.0563 5.75 11.9991 5.75C13.9419 5.75 15.5169 7.32499 15.5169 9.26784C15.5169 11.2107 13.9419 12.7857 11.9991 12.7857C10.0563 12.7857 8.48126 11.2107 8.48126 9.26784Z" fill=""/>`,
 
     chat: `<path fill-rule="evenodd" clip-rule="evenodd" d="M4.00002 12.0957C4.00002 7.67742 7.58174 4.0957 12 4.0957C16.4183 4.0957 20 7.67742 20 12.0957C20 16.514 16.4183 20.0957 12 20.0957H5.06068L6.34317 18.8132C6.48382 18.6726 6.56284 18.4818 6.56284 18.2829C6.56284 18.084 6.48382 17.8932 6.34317 17.7526C4.89463 16.304 4.00002 14.305 4.00002 12.0957ZM12 2.5957C6.75332 2.5957 2.50002 6.849 2.50002 12.0957C2.50002 14.4488 3.35633 16.603 4.77303 18.262L2.71969 20.3154C2.50519 20.5299 2.44103 20.8525 2.55711 21.1327C2.6732 21.413 2.94668 21.5957 3.25002 21.5957H12C17.2467 21.5957 21.5 17.3424 21.5 12.0957C21.5 6.849 17.2467 2.5957 12 2.5957Z" fill=""/>`,
+
+    bot: `<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>`,
   }
 
   // ===== State =====
   const selectedMenu = ref<string>('')
   const sidebarOpen = ref<boolean>(false)
   const mobileMenuOpen = ref<boolean>(false)
-  const userPermissions = ref<string[]>([]) // Danh sách quyền của user
+  const userPermissions = ref<string[]>([])
+
+  // ===== Router =====
+  const route = useRoute()
+
+  // ===== Helper Functions =====
+
+  // Hàm kiểm tra route có match với pattern không
+  const isRouteMatching = (routePath: string, currentPath: string): boolean => {
+    // Exact match
+    if (routePath === currentPath) return true
+
+    // Check if current path starts with route path (cho nested routes)
+    if (currentPath.startsWith(routePath + '/') && routePath !== '/') {
+      return true
+    }
+
+    return false
+  }
+
+  // Hàm tìm menu item theo route
+  const findMenuByRoute = (targetRoute: string): MenuItem | null => {
+    for (const group of menuGroups) {
+      for (const item of group.items) {
+        // Check main item
+        if (item.route && isRouteMatching(item.route, targetRoute)) {
+          return item
+        }
+
+        // Check children
+        if (item.children) {
+          for (const child of item.children) {
+            if (child.route && isRouteMatching(child.route, targetRoute)) {
+              return item // Return parent for dropdown state
+            }
+          }
+        }
+      }
+    }
+    return null
+  }
 
   // ===== Actions =====
   const openMenu = (menuId: string): void => {
@@ -205,30 +239,113 @@ export const useMenu = (): MenuState => {
     return false
   }
 
-  const isMenuActive = (menuId: string): boolean => {
-    const route = useRoute()
-    const currentRoute = route.name as string
-
-    // Kiểm tra menu đang mở
-    if (isMenuOpen(menuId)) return true
-
-    // Kiểm tra route hiện tại
-    if (currentRoute === menuId) return true
-
-    // Kiểm tra trong tất cả menu groups
+  // ===== Helper: Find menu item by ID (including children) =====
+  const findMenuItemById = (
+    targetId: string
+  ): { item: MenuItem; parent?: MenuItem } | null => {
     for (const group of menuGroups) {
       for (const item of group.items) {
-        if (item.id === menuId) {
-          // Kiểm tra children của dropdown menu
-          if (item.children) {
-            return item.children.some((child) => child.id === currentRoute)
+        // Check main item
+        if (item.id === targetId) {
+          return { item }
+        }
+
+        // Check children
+        if (item.children) {
+          for (const child of item.children) {
+            if (child.id === targetId) {
+              return { item: child, parent: item }
+            }
           }
-          break
         }
       }
     }
+    return null
+  }
 
+  // ===== FIXED: isMenuActive Function =====
+  const isMenuActive = (menuId: string): boolean => {
+    const currentPath = route.path
+    const routeName = route.name as string
+
+    console.log('🔍 Debug Active Menu:', {
+      menuId,
+      currentPath,
+      routeName,
+      selectedMenu: selectedMenu.value,
+    })
+
+    // 1. Tìm menu item theo ID (bao gồm children)
+    const menuResult = findMenuItemById(menuId)
+    if (!menuResult) {
+      console.log('❌ Menu item not found:', menuId)
+      return false
+    }
+
+    const { item: targetItem, parent: parentItem } = menuResult
+
+    // 2. Nếu là parent dropdown và có child active
+    if (!parentItem && targetItem.type === 'dropdown') {
+      // Kiểm tra có child nào active không
+      const hasActiveChild = targetItem.children?.some(
+        (child) => child.route && isRouteMatching(child.route, currentPath)
+      )
+
+      if (hasActiveChild) {
+        console.log('✅ Parent dropdown active (has active child):', menuId)
+        return true
+      }
+
+      // Kiểm tra dropdown có đang mở không
+      if (isMenuOpen(menuId)) {
+        console.log('✅ Parent dropdown active (is open):', menuId)
+        return true
+      }
+    }
+
+    // 3. Kiểm tra route match trực tiếp
+    if (targetItem.route && isRouteMatching(targetItem.route, currentPath)) {
+      console.log('✅ Direct route match:', targetItem.route, '→', currentPath)
+      return true
+    }
+
+    // 4. Kiểm tra theo route name (fallback)
+    if (routeName && routeName === menuId) {
+      console.log('✅ Route name exact match:', routeName, '→', menuId)
+      return true
+    }
+
+    // 5. Kiểm tra route name với prefix
+    if (routeName && routeName.includes(menuId)) {
+      console.log('✅ Route name contains match:', routeName, '→', menuId)
+      return true
+    }
+
+    console.log('❌ No match found for:', menuId)
     return false
+  }
+
+  // ===== Auto-manage dropdown state based on current route =====
+  const updateMenuStateFromRoute = (): void => {
+    const currentPath = route.path
+    const activeMenuItem = findMenuByRoute(currentPath)
+
+    if (activeMenuItem && activeMenuItem.type === 'dropdown') {
+      // Mở dropdown nếu đang ở child route
+      const hasActiveChild = activeMenuItem.children?.some(
+        (child) => child.route && isRouteMatching(child.route, currentPath)
+      )
+
+      if (hasActiveChild) {
+        selectedMenu.value = activeMenuItem.id
+        console.log(
+          '🔥 Auto-opened dropdown:',
+          activeMenuItem.id,
+          'for route:',
+          currentPath
+        )
+      }
+    }
   }
 
   // ===== Filtered Menu Groups based on permissions =====
@@ -247,26 +364,29 @@ export const useMenu = (): MenuState => {
           }))
           .filter(
             (item) =>
-              // Hiển thị item nếu:
-              // 1. Không có children (single link)
-              // 2. Có children và children không rỗng sau filter
               !item.children || (item.children && item.children.length > 0)
           ),
       }))
-      .filter((group) => group.items.length > 0) // Chỉ hiển thị group có items
+      .filter((group) => group.items.length > 0)
   })
 
   const getIcon = (iconName: string): string => {
     return iconComponents[iconName] || ''
   }
 
-  // ===== Auto close mobile menu when route changes =====
-  const route = useRoute()
+  // ===== Watchers =====
+
+  // Watch route changes to update menu state
   watch(
     () => route.path,
-    () => {
+    (newPath) => {
+      console.log('🌐 Route changed to:', newPath)
+      // Close mobile menu on route change
       mobileMenuOpen.value = false
-    }
+      // Update menu state based on new route
+      updateMenuStateFromRoute()
+    },
+    { immediate: true }
   )
 
   // ===== Auto close mobile menu on desktop =====
@@ -279,6 +399,8 @@ export const useMenu = (): MenuState => {
   onMounted(() => {
     if (process.client) {
       window.addEventListener('resize', handleResize)
+      // Initialize menu state based on current route
+      updateMenuStateFromRoute()
     }
   })
 
