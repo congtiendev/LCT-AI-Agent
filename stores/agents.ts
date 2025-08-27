@@ -9,6 +9,7 @@ import { AgentService } from '~/services/agentService'
 export const useAgentsStore = defineStore('agents', () => {
   // State
   const agents = ref<Agent[]>([])
+  const selectedAgentTemplate = ref<Agent | null>(null)
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
   const currentAgent = ref<Agent | null>(null)
@@ -201,7 +202,7 @@ export const useAgentsStore = defineStore('agents', () => {
     loading: readonly(loading),
     error: readonly(error),
     currentAgent: readonly(currentAgent),
-
+    selectedAgentTemplate,
     // Getters
     publishedAgents,
     draftAgents,

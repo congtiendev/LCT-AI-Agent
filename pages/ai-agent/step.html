@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced Setup Progress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .gradient-bg {
+        background: linear-gradient(
+          135deg,
+          #4a90e2 0%,
+          #6b73d9 20%,
+          #8b5fbf 40%,
+          #a8508a 60%,
+          #c54756 80%,
+          #e53e3e 100%
+        );
+      }
+
+      /* Updated step-active to use gradient background */
+      .step-active {
+        background: linear-gradient(
+          135deg,
+          #4a90e2 0%,
+          #6b73d9 20%,
+          #8b5fbf 40%,
+          #a8508a 60%,
+          #c54756 80%,
+          #e53e3e 100%
+        );
+        color: white;
+      }
+
+      /* Updated step-completed to use gradient background */
+      .step-completed {
+        background: linear-gradient(
+          135deg,
+          #4a90e2 0%,
+          #6b73d9 20%,
+          #8b5fbf 40%,
+          #a8508a 60%,
+          #c54756 80%,
+          #e53e3e 100%
+        );
+        color: white;
+      }
+
+      .step-pending {
+        background: #e5e7eb;
+        color: #6b7280;
+        border: 2px solid #d1d5db;
+      }
+
+      .progress-line {
+        height: 4px;
+        background: #e5e7eb;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Updated progress-fill to use gradient background */
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          #4a90e2 0%,
+          #6b73d9 20%,
+          #8b5fbf 40%,
+          #a8508a 60%,
+          #c54756 80%,
+          #e53e3e 100%
+        );
+        transition: width 0.5s ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-gray-50 p-4">
+    <div class="w-full max-w-7xl mx-auto">
+      <!-- Updated header to match the design with step counter -->
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-2xl font-semibold text-gray-900">
+          Advanced Setup Progress
+        </h1>
+        <span id="stepCounter" class="text-sm text-gray-500">Step 4 of 12</span>
+      </div>
+
+      <!-- Completely redesigned progress container to match the image -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <!-- Progress Steps -->
+        <div class="relative">
+          <!-- Background Line -->
+          <div class="progress-line rounded-full mb-8">
+            <div
+              id="progressFill"
+              class="progress-fill rounded-full"
+              style="width: 25%"
+            ></div>
+          </div>
+
+          <!-- Updated to 12 steps with proper labels from the image -->
+          <div class="grid grid-cols-12 gap-2 mb-4">
+            <!-- Step 1 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(1)"
+            >
+              <div
+                id="step1"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-completed transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>1</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">Basic Info</p>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(2)"
+            >
+              <div
+                id="step2"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-completed transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>2</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">Personality</p>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(3)"
+            >
+              <div
+                id="step3"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-completed transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>3</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">Goals & Tone</p>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(4)"
+            >
+              <div
+                id="step4"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-active transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>4</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">
+                  Business Topics
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(5)"
+            >
+              <div
+                id="step5"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-pending transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>5</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">Strategy</p>
+              </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(6)"
+            >
+              <div
+                id="step6"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-pending transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>6</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">
+                  Proactive Triggers
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 7 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(7)"
+            >
+              <div
+                id="step7"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-pending transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>7</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">Capabilities</p>
+              </div>
+            </div>
+
+            <!-- Step 8 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(8)"
+            >
+              <div
+                id="step8"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-pending transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>8</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">
+                  Knowledge Base
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 9 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(9)"
+            >
+              <div
+                id="step9"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-pending transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>9</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">
+                  Projects & Workflows
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 10 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(10)"
+            >
+              <div
+                id="step10"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-pending transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>10</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">Marketplace</p>
+              </div>
+            </div>
+
+            <!-- Step 11 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(11)"
+            >
+              <div
+                id="step11"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-pending transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>11</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">
+                  Advanced Security
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 12 -->
+            <div
+              class="flex flex-col items-center cursor-pointer"
+              onclick="setStep(12)"
+            >
+              <div
+                id="step12"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium step-pending transition-all duration-200 hover:scale-105 mb-2"
+              >
+                <span>12</span>
+              </div>
+              <div class="text-center">
+                <p class="text-xs text-gray-600 leading-tight">Deployment</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentStep = 4
+      const totalSteps = 12
+
+      const stepLabels = [
+        'Basic Info',
+        'Personality',
+        'Goals & Tone',
+        'Business Topics',
+        'Strategy',
+        'Proactive Triggers',
+        'Capabilities',
+        'Knowledge Base',
+        'Projects & Workflows',
+        'Marketplace',
+        'Advanced Security',
+        'Deployment',
+      ]
+
+      function setStep(step) {
+        if (step < 1 || step > totalSteps) return
+
+        currentStep = step
+        updateProgress()
+        updateStepCounter()
+      }
+
+      function updateProgress() {
+        const progressFill = document.getElementById('progressFill')
+        const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100
+        progressFill.style.width = progressPercentage + '%'
+
+        // Update step circles
+        for (let i = 1; i <= totalSteps; i++) {
+          const stepElement = document.getElementById(`step${i}`)
+
+          stepElement.className = stepElement.className.replace(
+            /step-(active|completed|pending)/g,
+            ''
+          )
+
+          if (i < currentStep) {
+            stepElement.classList.add('step-completed')
+          } else if (i === currentStep) {
+            stepElement.classList.add('step-active')
+          } else {
+            stepElement.classList.add('step-pending')
+          }
+        }
+      }
+
+      function updateStepCounter() {
+        const stepCounter = document.getElementById('stepCounter')
+        stepCounter.textContent = `Step ${currentStep} of ${totalSteps}`
+      }
+
+      // Initialize
+      updateProgress()
+      updateStepCounter()
+    </script>
+  </body>
+</html>

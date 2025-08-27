@@ -9,6 +9,53 @@
     #e53e3e 100%
   );
 }
+
+.bg-primary {
+  background: linear-gradient(
+    135deg,
+    #4a90e2 0%,
+    #6b73d9 20%,
+    #8b5fbf 40%,
+    #a8508a 60%,
+    #c54756 80%,
+    #e53e3e 100%
+  );
+}
+
+.bg-primary-blue {
+  background-color: #4a90e2;
+}
+
+.bg-primary-purple {
+  background-color: #8b5fbf;
+}
+
+.bg-primary-pink {
+  background-color: #a8508a;
+}
+
+.bg-primary-red {
+  background-color: #c54756;
+}
+
+.bg-primary-red-bold {
+  background-color: #e53e3e;
+}
+.ring-primary-blue {
+  box-shadow: 0 0 0 2px #4a90e2;
+}
+.ring-primary-purple {
+  box-shadow: 0 0 0 2px #8b5fbf;
+}
+.ring-primary-pink {
+  box-shadow: 0 0 0 2px #a8508a;
+}
+.ring-primary-red {
+  box-shadow: 0 0 0 2px #c54756;
+}
+.ring-primary-red-bold {
+  box-shadow: 0 0 0 2px #e53e3e;
+}
 .swal2-container {
   z-index: 9999 !important;
 }

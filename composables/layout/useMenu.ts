@@ -268,17 +268,9 @@ export const useMenu = (): MenuState => {
     const currentPath = route.path
     const routeName = route.name as string
 
-    console.log('🔍 Debug Active Menu:', {
-      menuId,
-      currentPath,
-      routeName,
-      selectedMenu: selectedMenu.value,
-    })
-
     // 1. Tìm menu item theo ID (bao gồm children)
     const menuResult = findMenuItemById(menuId)
     if (!menuResult) {
-      console.log('❌ Menu item not found:', menuId)
       return false
     }
 
@@ -292,36 +284,30 @@ export const useMenu = (): MenuState => {
       )
 
       if (hasActiveChild) {
-        console.log('✅ Parent dropdown active (has active child):', menuId)
         return true
       }
 
       // Kiểm tra dropdown có đang mở không
       if (isMenuOpen(menuId)) {
-        console.log('✅ Parent dropdown active (is open):', menuId)
         return true
       }
     }
 
     // 3. Kiểm tra route match trực tiếp
     if (targetItem.route && isRouteMatching(targetItem.route, currentPath)) {
-      console.log('✅ Direct route match:', targetItem.route, '→', currentPath)
       return true
     }
 
     // 4. Kiểm tra theo route name (fallback)
     if (routeName && routeName === menuId) {
-      console.log('✅ Route name exact match:', routeName, '→', menuId)
       return true
     }
 
     // 5. Kiểm tra route name với prefix
     if (routeName && routeName.includes(menuId)) {
-      console.log('✅ Route name contains match:', routeName, '→', menuId)
       return true
     }
 
-    console.log('❌ No match found for:', menuId)
     return false
   }
 
@@ -338,12 +324,6 @@ export const useMenu = (): MenuState => {
 
       if (hasActiveChild) {
         selectedMenu.value = activeMenuItem.id
-        console.log(
-          '🔥 Auto-opened dropdown:',
-          activeMenuItem.id,
-          'for route:',
-          currentPath
-        )
       }
     }
   }
