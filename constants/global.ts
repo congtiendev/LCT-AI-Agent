@@ -1,0 +1,17 @@
+export const FILE_ICONS = {
+  pdf: '/images/icons/files/pdf.png',
+  docx: '/images/icons/files/docx.png',
+  doc: '/images/icons/files/doc.png',
+  docs: '/images/icons/files/doc.png',
+  ppt: '/images/icons/files/ppt.png',
+  sheets: '/images/icons/files/xls.png',
+  xls: '/images/icons/files/xls.png',
+  zip: '/images/icons/files/zip.png',
+  mp3: '/images/icons/files/mp3.png',
+  mp4: '/images/icons/files/mp4.png',
+  txt: '/images/icons/files/txt.png',
+  jpg: '/images/icons/files/jpg.png',
+  jpeg: '/images/icons/files/jpg.png',
+  png: '/images/icons/files/png.png',
+  default: '/images/icons/files/default.png',
+}

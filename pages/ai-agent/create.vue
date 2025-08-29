@@ -23,7 +23,8 @@
         </nav>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 justify-center max-w-5xl mx-auto">
+    <!-- Set create type -->
+    <div class="grid grid-cols-2 gap-4 justify-center max-w-5xl mx-auto" v-if="!selectedAgent">
         <section
             class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 text-center"
             :class="{ 'ring-2 ring-primary-blue': createType === 'template' }" @click="changeCreateType('template')">
@@ -99,168 +100,206 @@
                 Build Custom
             </button>
         </section>
-
-
     </div>
-    <section id="agent__template" v-if="createType === 'template'" class="h-screen">
-        <div v-if="!selectedAgentTemplate" class=" grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
-            py-8">
-            <div v-for="agent in agents" :key="agent.id" @click="selectAgentTemplate(agent)"
-                class="group  rounded-xl border border-gray-200 bg-white p-4 shadow-xs dark:border-gray-800 dark:bg-white/[0.03] p-6 shadow-sm transition-all hover:shadow-xl dark:border-gray-700 dark:bg-gray-800 hover:cursor-pointer">
-                <!-- Agent Icon/Avatar -->
-                <div class="flex align-items-center justify-between">
-                    <div class="h-12 w-12 overflow-hidden rounded-full">
-                        <img :src="'/images/avatars/chatbot.png'" alt="Agent Avatar"
-                            class="w-full h-full object-cover" />
+
+    <!-- Progress Bar -->
+    <div class="w-full  mx-auto my-5" v-if="selectedAgent || createType === 'custom'">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 ">
+            <div class="flex justify-between items-center px-5 py-3">
+                <h1 class=" font-semibold text-gray-900">
+                    Advanced Setup Progress
+                </h1>
+                <span class="text-sm text-gray-500">
+                    Step {{ currentStep }} of {{ totalSteps }}
+                </span>
+            </div>
+            <!-- Progress Steps -->
+            <div class="relative">
+                <div class="grid grid-cols-4 gap-2 mb-4 relative">
+                    <!-- Background Line - positioned to connect step centers -->
+                    <div class="progress-line absolute top-4 h-1 bg-gray-200 rounded-full"
+                        style="left: calc(12.5% + 16px); right: calc(12.5% + 16px);">
+                        <div class="progress-fill h-full rounded-full transition-all duration-500"
+                            :style="{ width: progressPercentage + '%' }"></div>
                     </div>
-                </div>
 
-                <!-- Agent Info -->
-                <div class="my-4 space-y-2">
-                    <div class="flex items-start justify-between gap-2">
-                        <h3 class="font-semibold text-gray-900 dark:text-white line-clamp-1">
-                            {{ agent.name }}
-                        </h3>
-                        <StatusBadge :published="agent.published" />
-                    </div>
-
-                    <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
-                        {{ agent.description }}
-                    </p>
-                </div>
-
-                <!-- Agent Metadata -->
-                <div class="mb-4 space-y-2 text-xs text-gray-500 dark:text-gray-400">
-                    <div class="flex items-center gap-1">
-                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                        <span>Created {{ agent.created_at }}</span>
+                    <div v-for="(step, index) in stepLabels" :key="index + 1"
+                        class="flex flex-col items-center cursor-pointer relative z-10" @click="setStep(index + 1)">
+                        <div :class="getStepClass(index + 1)"
+                            class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105 mb-2 border-2 border-white">
+                            <span>{{ index + 1 }}</span>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xs text-gray-600 leading-tight">
+                                {{ step.label }}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-else class="max-w-4xl mx-auto mt-5">
-            <div
-                class="group  rounded-xl border border-gray-200 bg-white p-4 shadow-xs dark:border-gray-800 dark:bg-white/[0.03] p-6 shadow-sm transition-all hover:shadow-xl dark:border-gray-700 dark:bg-gray-800">
-                <!-- Agent Icon/Avatar -->
-                <div class="flex align-items-center justify-between">
-                    <div class="h-12 w-12 overflow-hidden rounded-full">
-                        <img :src="'/images/avatars/chatbot.png'" alt="Agent Avatar"
-                            class="w-full h-full object-cover" />
-                    </div>
+    </div>
 
+    <div class="flex gap-4">
+        <aside
+            class="p-4 w-1/6 flex flex-col gap-1 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]"
+            v-if="selectedAgent || createType === 'custom'">
+            <span class="menu-item group cursor-pointer" v-for="(step, index) in stepLabels" :key="index + 1"
+                :class="currentStep >= index + 1 ? 'menu-item-active' : 'border border-gray-100 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white'"
+                @click="setStep(index + 1)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    v-html="step.icon" :class="currentStep !== index + 1 ? 'text-gray-500 dark:text-white' : ''">
+                </svg>
+                <span class="menu-item-text " :class="currentStep !== index + 1 ? 'text-gray-600 dark:text-white' : ''">
+                    {{ step.label }}
+                </span>
+            </span>
+        </aside>
+
+        <article class="h-screen flex-1">
+            <SelectAgent v-if="currentStep == 1" :agents="agents" v-model:create-type="createType"
+                v-model:selected-agent="selectedAgent" @create-agent="createAgent"
+                @select-agent-template="selectAgentTemplate" @unselect-agent-template="unselectAgentTemplate" />
+            <Topics v-if="currentStep == 2" :topics="topics" v-model:selected-topics="selectedTopics"
+                @add-topic="addTopic" @remove-topic="removeTopic" />
+            <Documents v-if="currentStep == 3" :documents="documents" v-model:selectedDocuments="selectedDocuments"
+                @upload-document="uploadDocument" @select-document="selectDocument" @remove-document="removeDocument" />
+
+            <Preview v-if="currentStep == 4" />
+            <div class="next-prev flex items-center justify-between mt-4" v-if="selectedAgent">
+                <button @click="setStep(currentStep - 1)" :disabled="currentStep === 1"
+                    class="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-theme-xs ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        title="Unselect Agent" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="lucide lucide-trash2-icon lucide-trash-2 text-red-600  hover:cursor-pointer"
-                        @click="unselectAgentTemplate">
-                        <path d="M10 11v6" />
-                        <path d="M14 11v6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                        <path d="M3 6h18" />
-                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-arrow-left-icon lucide-arrow-left">
+                        <path d="m12 19-7-7 7-7" />
+                        <path d="M19 12H5" />
                     </svg>
-                </div>
+                    Previous
+                </button>
 
-                <!-- Agent Info -->
-                <div class="my-4 space-y-2">
-                    <div class="flex items-start justify-between gap-2">
-                        <h3 class="font-semibold text-gray-900 dark:text-white line-clamp-1">
-                            {{ selectedAgentTemplate.name }}
-                        </h3>
-                        <StatusBadge :published="selectedAgentTemplate.published" />
-                    </div>
-
-                    <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
-                        {{ selectedAgentTemplate.description }}
-                    </p>
-                </div>
-
-                <!-- selectedAgentTemplate Metadata -->
-                <div class="mb-4 space-y-2 text-xs text-gray-500 dark:text-gray-400">
-                    <div class="flex items-center gap-1">
-                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                        <span>Created {{ selectedAgentTemplate.created_at }}</span>
-                    </div>
-                </div>
+                <button
+                    class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                    @click="setStep(currentStep + 1)">
+                    Next
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-arrow-right-icon lucide-arrow-right">
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                    </svg>
+                </button>
             </div>
-        </div>
-    </section>
-    <div id="agent__custom-build" v-if="createType === 'custom'" class="h-screen mt-10">
-        <div class="flex gap-4">
-            <div class="w-1/6 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-                <!-- Nội dung cột 1 (1/6 = 2/12) -->
-            </div>
-            <div class="flex-1 ">
-                <div
-                    class="grid-col-10 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-                    <div class="px-5 py-4 sm:px-6 sm:py-5">
-                        <h3 class="text-base font-bold text-gray-800 dark:text-white/90">
-                            Agent Configuration
-                        </h3>
-                    </div>
-                    <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
-                        <form>
-                            <div class="-mx-2.5 flex flex-wrap gap-y-5">
-                                <div class="w-full px-2.5 xl:w-1/2">
-                                    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                                        Agent Name
-                                    </label>
-                                    <input type="text" placeholder="Enter agent name"
-                                        class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30">
-                                </div>
-
-                                <div class="w-full px-2.5">
-                                    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                                        Description
-                                    </label>
-                                    <textarea placeholder="Enter description" rows="6"
-                                        class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"></textarea>
-                                </div>
-
-                                <div class="w-full px-2.5">
-                                    <button type="submit"
-                                        class="bg-brand-500 hover:bg-brand-600 flex w-full items-center justify-center gap-2 rounded-lg p-3 text-sm font-medium text-white transition-colors">
-                                        Save & Continue
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-arrow-right-icon lucide-arrow-right">
-                                            <path d="M5 12h14" />
-                                            <path d="m12 5 7 7-7 7" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </article>
     </div>
 </template>
 <script setup lang="ts">
 import { useCreateUpdateAgent } from '~/composables/ai-agent/useCreateUpdateAgent'
 const {
     agents,
-    selectedAgentTemplate,
+    topics,
+    documents,
+    selectedAgent,
+    selectedTopics,
+    selectedDocuments,
+    fileTypes,
+    fileAccept,
+
+    uploadDocument,
+    selectDocument,
+    removeDocument,
     loading,
+    error,
+    agentCount,
+    publishedCount,
+    draftCount,
     createType,
-    initializeStore,
+    currentStep,
+    totalSteps,
+    stepLabels,
+    progressPercentage,
+    createAgent,
     fetchAgents,
+    changeCreateType,
+    initializeStore,
     storeCreateAgent,
     storeUpdateAgent,
-    changeCreateType,
+    storeDeleteAgent,
+    storeToggleStatus,
     selectAgentTemplate,
-    unselectAgentTemplate
+    unselectAgentTemplate,
+    addTopic,
+    removeTopic,
+    setStep,
+    getStepClass,
+    clearError,
 } = useCreateUpdateAgent()
-
+useHead({
+    title: 'Create Agent',
+    meta: [
+        {
+            name: 'description',
+            content: 'Create a new AI agent'
+        }
+    ]
+})
 await fetchAgents()
 </script>
+<style scoped>
+.gradient-bg {
+    background: linear-gradient(135deg,
+            #4a90e2 0%,
+            #6b73d9 20%,
+            #8b5fbf 40%,
+            #a8508a 60%,
+            #c54756 80%,
+            #e53e3e 100%);
+}
+
+.step-active {
+    background: linear-gradient(135deg,
+            #4a90e2 0%,
+            #6b73d9 20%,
+            #8b5fbf 40%,
+            #a8508a 60%,
+            #c54756 80%,
+            #e53e3e 100%);
+    color: white;
+}
+
+.step-completed {
+    background: linear-gradient(135deg,
+            #4a90e2 0%,
+            #6b73d9 20%,
+            #8b5fbf 40%,
+            #a8508a 60%,
+            #c54756 80%,
+            #e53e3e 100%);
+    color: white;
+}
+
+.step-pending {
+    background: white;
+    color: #6b7280;
+    border: 2px solid #d1d5db !important;
+}
+
+.progress-line {
+    height: 4px;
+    background: #e5e7eb;
+    position: absolute;
+    top: 16px;
+    z-index: 1;
+}
+
+.progress-fill {
+    background: linear-gradient(135deg,
+            #4a90e2 0%,
+            #6b73d9 20%,
+            #8b5fbf 40%,
+            #a8508a 60%,
+            #c54756 80%,
+            #e53e3e 100%);
+}
+</style>

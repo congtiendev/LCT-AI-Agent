@@ -4,12 +4,18 @@ import type {
   CreateAgentRequest,
   UpdateAgentRequest,
 } from '~/types/agents'
+import type { Topics } from '~/types/topics'
+import type { Documents } from '~/types/documents'
+
 import { AgentService } from '~/services/agentService'
 
 export const useAgentsStore = defineStore('agents', () => {
   // State
   const agents = ref<Agent[]>([])
-  const selectedAgentTemplate = ref<Agent | null>(null)
+  const agentTemplates = ref<Agent[]>([])
+  const selectedAgent = ref<Agent | null>(null)
+  const selectedTopics = ref<Topics[]>([])
+  const selectedDocuments = ref<Documents[]>([])
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
   const currentAgent = ref<Agent | null>(null)
@@ -37,7 +43,20 @@ export const useAgentsStore = defineStore('agents', () => {
       agents.value = await AgentService.getAgents()
     } catch (err) {
       error.value = 'Failed to fetch agents'
-      console.error('Fetch agents error:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const getAgentTemplates = async (): Promise<Agent[]> => {
+    try {
+      loading.value = true
+      error.value = null
+      agentTemplates.value = await AgentService.getAgents()
+      return agentTemplates.value
+    } catch (err) {
+      error.value = 'Failed to fetch agent templates'
+      return []
     } finally {
       loading.value = false
     }
@@ -59,7 +78,6 @@ export const useAgentsStore = defineStore('agents', () => {
       return agent
     } catch (err) {
       error.value = 'Failed to fetch agent'
-      console.error('Get agent error:', err)
       return null
     } finally {
       loading.value = false
@@ -198,11 +216,13 @@ export const useAgentsStore = defineStore('agents', () => {
 
   return {
     // State
-    agents: readonly(agents),
+    agents,
     loading: readonly(loading),
     error: readonly(error),
     currentAgent: readonly(currentAgent),
-    selectedAgentTemplate,
+    selectedAgent,
+    selectedTopics,
+    selectedDocuments,
     // Getters
     publishedAgents,
     draftAgents,
@@ -212,6 +232,7 @@ export const useAgentsStore = defineStore('agents', () => {
 
     // Actions
     fetchAgents,
+    getAgentTemplates,
     getAgentById,
     createAgent,
     updateAgent,

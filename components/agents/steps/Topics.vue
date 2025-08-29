@@ -33,11 +33,13 @@
                 </a>
             </div>
         </div>
+
         <div class="border-b border-gray-200 px-5 py-4 dark:border-gray-800">
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 xl:grid-cols-4">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 xl:grid-cols-3">
                 <!--  Item Start -->
-                <div
-                    class="rounded-2xl border border-gray-200 bg-white px-6 pb-5 pt-6 dark:border-gray-800 dark:bg-white/[0.03] hover:shadow-lg cursor-pointer">
+                <div v-for="topic in topics" :key="topic.id" @click="$emit('add-topic', topic)"
+                    class="rounded-2xl border border-gray-200 bg-white px-6 pb-5 pt-6 dark:border-gray-800 dark:bg-white/[0.03] hover:shadow-lg cursor-pointer"
+                    :class="selectedTopics.includes(topic) ? 'ring-primary-blue' : ''">
                     <div class="flex items-center gap-3">
                         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -51,29 +53,54 @@
                             </svg>
                         </div>
                         <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
-                            T1.1: Báo Cáo Tiến Độ Real-time
+                            {{ topic.name }}
                         </h3>
                     </div>
                     <p class="block text-theme-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Cung cấp tóm tắt trạng thái dự án (công việc hoàn thành, đang thực hiện, còn lại) dựa
-                        trên dữ liệu ABMS
+                        {{ topic.description }}
                     </p>
+
+                    <div class="flex flex-wrap gap-2 pt-2">
+                        <span v-for="action in topic.actions" :key="action"
+                            class="rounded-full bg-brand-50 py-0.5 pl-2 pr-2.5 text-sm font-medium text-brand-500 dark:bg-brand-500/15 dark:text-brand-400">
+                            {{ action }}
+                        </span>
+                    </div>
                 </div>
                 <!--  Item End -->
             </div>
         </div>
 
+
         <div class="list__topics-selected p-4">
-            <span
-                class="inline-flex items-center justify-center gap-1 rounded-lg bg-brand-500 py-0.5 pl-2.5 pr-2 text-sm font-medium text-white">
-                Primary
-                <svg class="fill-current" width="12" height="12" viewBox="0 0 12 12" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                        d="M5.25012 3C5.25012 2.58579 5.58591 2.25 6.00012 2.25C6.41433 2.25 6.75012 2.58579 6.75012 3V5.25012L9.00034 5.25012C9.41455 5.25012 9.75034 5.58591 9.75034 6.00012C9.75034 6.41433 9.41455 6.75012 9.00034 6.75012H6.75012V9.00034C6.75012 9.41455 6.41433 9.75034 6.00012 9.75034C5.58591 9.75034 5.25012 9.41455 5.25012 9.00034L5.25012 6.75012H3C2.58579 6.75012 2.25 6.41433 2.25 6.00012C2.25 5.58591 2.58579 5.25012 3 5.25012H5.25012V3Z"
-                        fill=""></path>
-                </svg>
-            </span>
+            <h3 class="text-sm font-semibold text-gray-800 dark:text-white/90 mb-2">
+                Selected Topics ({{ selectedTopics.length }})
+            </h3>
+            <div class="flex flex-wrap gap-2 ">
+                <span v-for="topic in selectedTopics" :key="topic.id"
+                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 py-0.5 pl-2.5 pr-2 text-sm font-medium text-white">
+                    {{ topic.name }}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-x-icon lucide-x cursor-pointer" @click="$emit('remove-topic', topic)">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>
+                </span>
+            </div>
         </div>
     </div>
 </template>
+<script setup lang="ts">
+import type { Topics } from '~/types/topics'
+interface Props {
+    topics: Topics[]
+    selectedTopics: Topics[]
+}
+const props = defineProps<Props>()
+const emit = defineEmits<{
+    'update:selected-topics': (topics: Topics[]) => void
+    'add-topic': [topic: Topics]
+    'remove-topic': [topic: Topics]
+}>()
+</script>
