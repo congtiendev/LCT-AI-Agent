@@ -205,8 +205,7 @@
 
                             <!-- Mobile Logo -->
                             <NuxtLink to="/" class="lg:hidden">
-                                <img class="dark:hidden" src="/images/logo/logo.svg" alt="Logo" />
-                                <img class="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" />
+                                <img class="h-5" src="/images/logo/logo.png" alt="Logo" />
                             </NuxtLink>
 
                             <!-- Mobile menu button -->
