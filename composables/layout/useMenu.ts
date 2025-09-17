@@ -41,9 +41,12 @@ export interface MenuState {
   closeAll: () => void
   setUserPermissions: (permissions: string[]) => void
 
-  // Getters
+  // Getters - NEW: Separated functions
   isMenuOpen: (menuId: string) => boolean
-  isMenuActive: (menuId: string) => boolean
+  isParentDropdownActive: (menuId: string) => boolean
+  isChildMenuActive: (menuId: string) => boolean
+  isLinkMenuActive: (menuId: string) => boolean
+  isMenuActive: (menuId: string) => boolean // Deprecated but kept for compatibility
   hasPermission: (permission: string | string[] | boolean) => boolean
   getIcon: (iconName: string) => string
 }
@@ -159,32 +162,43 @@ export const useMenu = (): MenuState => {
 
   // ===== Helper Functions =====
 
-  // Hàm kiểm tra route có match với pattern không
-  const isRouteMatching = (routePath: string, currentPath: string): boolean => {
-    // Exact match
-    if (routePath === currentPath) return true
+  // Helper: Find menu item by ID (including children)
+  const findMenuItemById = (
+    targetId: string
+  ): { item: MenuItem; parent?: MenuItem } | null => {
+    for (const group of menuGroups) {
+      for (const item of group.items) {
+        // Check main item
+        if (item.id === targetId) {
+          return { item }
+        }
 
-    // Check if current path starts with route path (cho nested routes)
-    if (currentPath.startsWith(routePath + '/') && routePath !== '/') {
-      return true
+        // Check children
+        if (item.children) {
+          for (const child of item.children) {
+            if (child.id === targetId) {
+              return { item: child, parent: item }
+            }
+          }
+        }
+      }
     }
-
-    return false
+    return null
   }
 
-  // Hàm tìm menu item theo route
+  // Helper: Tìm menu item theo route
   const findMenuByRoute = (targetRoute: string): MenuItem | null => {
     for (const group of menuGroups) {
       for (const item of group.items) {
         // Check main item
-        if (item.route && isRouteMatching(item.route, targetRoute)) {
+        if (item.route && item.route === targetRoute) {
           return item
         }
 
         // Check children
         if (item.children) {
           for (const child of item.children) {
-            if (child.route && isRouteMatching(child.route, targetRoute)) {
+            if (child.route && child.route === targetRoute) {
               return item // Return parent for dropdown state
             }
           }
@@ -257,73 +271,79 @@ export const useMenu = (): MenuState => {
     return false
   }
 
-  // ===== Helper: Find menu item by ID (including children) =====
-  const findMenuItemById = (
-    targetId: string
-  ): { item: MenuItem; parent?: MenuItem } | null => {
-    for (const group of menuGroups) {
-      for (const item of group.items) {
-        // Check main item
-        if (item.id === targetId) {
-          return { item }
-        }
+  // ===== NEW: SEPARATED ACTIVE FUNCTIONS =====
 
-        // Check children
-        if (item.children) {
-          for (const child of item.children) {
-            if (child.id === targetId) {
-              return { item: child, parent: item }
-            }
-          }
-        }
-      }
+  // 1. Hàm check parent dropdown active (CHỈ khi có child active)
+  const isParentDropdownActive = (menuId: string): boolean => {
+    const currentPath = route.path
+    const menuResult = findMenuItemById(menuId)
+
+    if (!menuResult || menuResult.parent) {
+      return false // Chỉ dành cho parent items
     }
-    return null
+
+    const { item: targetItem } = menuResult
+
+    if (targetItem.type !== 'dropdown') {
+      return false // Chỉ dành cho dropdown
+    }
+
+    // Kiểm tra có child nào active không
+    const hasActiveChild = targetItem.children?.some(
+      (child) => child.route && child.route === currentPath
+    )
+
+    return !!hasActiveChild
   }
 
-  // ===== FIXED: isMenuActive Function =====
-  const isMenuActive = (menuId: string): boolean => {
+  // 2. Hàm check child menu active (CHỈ child)
+  const isChildMenuActive = (menuId: string): boolean => {
     const currentPath = route.path
-    const routeName = route.name as string
-
-    // 1. Tìm menu item theo ID (bao gồm children)
     const menuResult = findMenuItemById(menuId)
-    if (!menuResult) {
-      return false
+
+    if (!menuResult || !menuResult.parent) {
+      return false // Chỉ dành cho child items
     }
 
-    const { item: targetItem, parent: parentItem } = menuResult
+    const { item: targetItem } = menuResult
+    const isActive = !!(targetItem.route && targetItem.route === currentPath)
 
-    // 2. Nếu là parent dropdown và có child active
-    if (!parentItem && targetItem.type === 'dropdown') {
-      // Kiểm tra có child nào active không
-      const hasActiveChild = targetItem.children?.some(
-        (child) => child.route && isRouteMatching(child.route, currentPath)
-      )
+    return isActive
+  }
 
-      if (hasActiveChild) {
-        return true
-      }
+  // 3. Hàm check link menu active (CHỈ single links)
+  const isLinkMenuActive = (menuId: string): boolean => {
+    const currentPath = route.path
+    const menuResult = findMenuItemById(menuId)
 
-      // Kiểm tra dropdown có đang mở không
-      if (isMenuOpen(menuId)) {
-        return true
-      }
+    if (!menuResult || menuResult.parent) {
+      return false // Chỉ dành cho top-level items
     }
 
-    // 3. Kiểm tra route match trực tiếp
-    if (targetItem.route && isRouteMatching(targetItem.route, currentPath)) {
-      return true
+    const { item: targetItem } = menuResult
+
+    if (targetItem.type !== 'link') {
+      return false // Chỉ dành cho link items
     }
 
-    // 4. Kiểm tra theo route name (fallback)
-    if (routeName && routeName === menuId) {
-      return true
-    }
+    const isActive = !!(targetItem.route && targetItem.route === currentPath)
 
-    // 5. Kiểm tra route name với prefix
-    if (routeName && routeName.includes(menuId)) {
-      return true
+    return isActive
+  }
+
+  // 4. Hàm tổng hợp cũ (deprecated but kept for backward compatibility)
+  const isMenuActive = (menuId: string): boolean => {
+    const menuResult = findMenuItemById(menuId)
+    if (!menuResult) return false
+
+    const { parent, item } = menuResult
+
+    if (parent) {
+      return isChildMenuActive(menuId)
+    } else if (item.type === 'dropdown') {
+      return isParentDropdownActive(menuId)
+    } else if (item.type === 'link') {
+      return isLinkMenuActive(menuId)
     }
 
     return false
@@ -337,7 +357,7 @@ export const useMenu = (): MenuState => {
     if (activeMenuItem && activeMenuItem.type === 'dropdown') {
       // Mở dropdown nếu đang ở child route
       const hasActiveChild = activeMenuItem.children?.some(
-        (child) => child.route && isRouteMatching(child.route, currentPath)
+        (child) => child.route && child.route === currentPath
       )
 
       if (hasActiveChild) {
@@ -428,9 +448,12 @@ export const useMenu = (): MenuState => {
     closeAll,
     setUserPermissions,
 
-    // Getters
+    // Getters - NEW: Separated functions
     isMenuOpen,
-    isMenuActive,
+    isParentDropdownActive,
+    isChildMenuActive,
+    isLinkMenuActive,
+    isMenuActive, // Deprecated but kept for compatibility
     hasPermission,
     getIcon,
   }

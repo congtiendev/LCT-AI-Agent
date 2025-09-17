@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h2>Mapped Messages Result:</h2>
         <pre>{{ JSON.stringify(mappedChats, null, 2) }}</pre>
     </div>
 </template>
@@ -294,7 +293,6 @@ pre {
     padding: 1rem;
     border-radius: 4px;
     overflow: auto;
-    max-height: 400px;
 }
 
 h2 {

@@ -68,12 +68,12 @@
                                 <div v-if="item.type === 'dropdown'">
                                     <button @click="toggleMenu(item.id)"
                                         class="flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition-colors duration-200 relative group w-full text-left"
-                                        :class="isMenuActive(item.id)
+                                        :class="isParentDropdownActive(item.id)
                                             ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
                                             : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300'">
 
                                         <!-- Icon -->
-                                        <svg :class="isMenuActive(item.id)
+                                        <svg :class="isParentDropdownActive(item.id)
                                             ? 'fill-blue-700 dark:fill-blue-400'
                                             : 'fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300'"
                                             width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -89,7 +89,7 @@
                                         <svg class="absolute top-1/2 right-2.5 -translate-y-1/2 stroke-current transition-transform duration-200"
                                             :class="[
                                                 isMenuOpen(item.id) ? 'rotate-180' : '',
-                                                isMenuActive(item.id)
+                                                isParentDropdownActive(item.id)
                                                     ? 'stroke-blue-700 dark:stroke-blue-400'
                                                     : 'stroke-gray-500 group-hover:stroke-gray-700 dark:stroke-gray-400 dark:group-hover:stroke-gray-300',
                                                 sidebarOpen ? 'lg:hidden' : ''
@@ -107,7 +107,7 @@
                                             <li v-for="child in item.children" :key="child.id">
                                                 <NuxtLink :to="child.route || '#'"
                                                     class="flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 relative group"
-                                                    :class="isMenuActive(child.id)
+                                                    :class="isChildMenuActive(child.id)
                                                         ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
                                                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300'">
 
@@ -117,7 +117,7 @@
                                                     <span v-if="child.badge"
                                                         class="absolute right-3 flex items-center gap-1">
                                                         <span class="rounded px-1.5 py-0.5 text-xs font-medium"
-                                                            :class="isMenuActive(child.id)
+                                                            :class="isChildMenuActive(child.id)
                                                                 ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                                                                 : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'">
                                                             {{ child.badge.text }}
@@ -133,12 +133,12 @@
                                 <div v-else>
                                     <NuxtLink :to="item.route || '#'"
                                         class="flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition-colors duration-200 group"
-                                        :class="isMenuActive(item.id)
+                                        :class="isLinkMenuActive(item.id)
                                             ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
                                             : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300'">
 
                                         <!-- Icon -->
-                                        <svg :class="isMenuActive(item.id)
+                                        <svg :class="isLinkMenuActive(item.id)
                                             ? 'fill-blue-700 dark:fill-blue-400'
                                             : 'fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300'"
                                             width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -469,7 +469,10 @@ const {
     toggleMobileMenu,
     getIcon,
     setUserPermissions,
-    hasPermission
+    hasPermission,
+    isChildMenuActive,
+    isLinkMenuActive,
+    isParentDropdownActive
 } = useMenu()
 
 // Mock user data - replace with real auth
