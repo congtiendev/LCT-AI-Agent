@@ -151,7 +151,7 @@
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <div
                 class="group  rounded-xl  border-dashed  border-gray-200 border-2 bg-white p-4 shadow-xs dark:border-gray-800 dark:bg-white/[0.03] p-6  transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800 flex flex-col items-center justify-center">
-                <button
+                <NuxtLink to="/ai-agent/create"
                     class="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600 sm:w-auto">
                     <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -159,9 +159,10 @@
                             d="M9.2502 4.99951C9.2502 4.5853 9.58599 4.24951 10.0002 4.24951C10.4144 4.24951 10.7502 4.5853 10.7502 4.99951V9.24971H15.0006C15.4148 9.24971 15.7506 9.5855 15.7506 9.99971C15.7506 10.4139 15.4148 10.7497 15.0006 10.7497H10.7502V15.0001C10.7502 15.4143 10.4144 15.7501 10.0002 15.7501C9.58599 15.7501 9.2502 15.4143 9.2502 15.0001V10.7497H5C4.58579 10.7497 4.25 10.4139 4.25 9.99971C4.25 9.5855 4.58579 9.24971 5 9.24971H9.2502V4.99951Z"
                             fill=""></path>
                     </svg>
-                </button>
+                </NuxtLink>
                 <h1 class="mt-2 text-lg font-semibold text-gray-900 dark:text-white">Create New Agent</h1>
-                <p class="mt-1 text-xs text-gray-600 dark:text-gray-400">Start building your AI agent by clicking the
+                <p class="mt-1 text-xs text-gray-600 text-center dark:text-gray-400">Start building your AI agent by
+                    clicking the
                     button above.</p>
             </div>
             <div v-for="agent in agents" :key="agent.id"

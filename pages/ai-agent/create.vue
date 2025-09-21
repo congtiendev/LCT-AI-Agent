@@ -158,16 +158,7 @@
         </aside>
 
         <article class="h-screen flex-1">
-            <SelectAgent v-if="currentStep == 1" :agents="agents" v-model:create-type="createType"
-                v-model:selected-agent="selectedAgent" @create-agent="createAgent"
-                @select-agent-template="selectAgentTemplate" @unselect-agent-template="unselectAgentTemplate" />
-            <Topics v-if="currentStep == 2" :topics="topics" v-model:selected-topics="selectedTopics"
-                @add-topic="addTopic" @remove-topic="removeTopic" />
-            <Documents v-if="currentStep == 3" :documents="documents" v-model:selectedDocuments="selectedDocuments"
-                @upload-document="uploadDocument" @select-document="selectDocument" @remove-document="removeDocument" />
-
-            <Preview v-if="currentStep == 4" />
-            <div class="next-prev flex items-center justify-between mt-4" v-if="selectedAgent">
+            <div class="next-prev flex items-center justify-between mb-4" v-if="selectedAgent">
                 <button @click="setStep(currentStep - 1)" :disabled="currentStep === 1"
                     class="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-theme-xs ring-1 ring-inset ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -191,6 +182,16 @@
                     </svg>
                 </button>
             </div>
+            <SelectAgent v-if="currentStep == 1" :agents="agents" v-model:create-type="createType"
+                v-model:selected-agent="selectedAgent" @create-agent="createAgent"
+                @select-agent-template="selectAgentTemplate" @unselect-agent-template="unselectAgentTemplate" />
+            <Topics v-if="currentStep == 2" :topics="topics" v-model:selected-topics="selectedTopics"
+                @add-topic="addTopic" @remove-topic="removeTopic" />
+            <Documents v-if="currentStep == 3" :documents="documents" v-model:selectedDocuments="selectedDocuments"
+                @upload-document="uploadDocument" @select-document="selectDocument" @remove-document="removeDocument" />
+            <Preview v-if="currentStep == 4" :selected-agent="selectedAgent" :selected-topics="selectedTopics"
+                :selected-documents="selectedDocuments" v-model:show-chat-with-agent="showChatWithAgent"
+                @remove-topic="removeTopic" @remove-document="removeDocument" />
         </article>
     </div>
 </template>
@@ -205,7 +206,6 @@ const {
     selectedDocuments,
     fileTypes,
     fileAccept,
-
     uploadDocument,
     selectDocument,
     removeDocument,
@@ -219,7 +219,10 @@ const {
     totalSteps,
     stepLabels,
     progressPercentage,
+    showChatWithAgent,
     createAgent,
+    publishAgent,
+    cancelPublish,
     fetchAgents,
     changeCreateType,
     initializeStore,

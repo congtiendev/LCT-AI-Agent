@@ -58,15 +58,16 @@
                     <div ref="messagesArea" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                         <div v-for="(message, index) in messages" :key="message.id"
                             class="flex flex-col gap-1 opacity-0 animate-message-slide-in"
-                            :class="{ 'items-end': message.isOwn }" :style="{ 'animation-delay': `${index * 0.1}s` }">
+                            :class="{ 'items-end': message.owner }" :style="{ 'animation-delay': `${index * 0.1}s` }">
                             <div class="inline-block max-w-xs px-4 py-3 rounded-2xl relative transition-all duration-300 hover:scale-105 transform-gpu text-sm"
-                                :class="message.isOwn
+                                :class="message.owner
                                     ? 'text-white shadow-lg message-gradient animate-gradient-shift hover:shadow-xl hover:-translate-y-1'
                                     : 'bg-white text-gray-800 shadow-sm border border-black/5 hover:shadow-md'">
-                                {{ message.text }}
+                                {{ message }}
+                                <!-- {{ message.messages.content }} -->
                             </div>
                             <div class="text-xs text-gray-500 px-2 opacity-0 animate-fade-in-delayed">
-                                {{ formatTime(message.timestamp) }}
+                                <!-- {{ message.messages.message.created_at }} -->
                             </div>
                         </div>
 
@@ -94,9 +95,9 @@
                     <div class="flex items-center gap-3">
                         <input v-model="newMessage" type="text" placeholder="Nhập tin nhắn..."
                             class="flex-1 px-5 py-3 bg-gray-50 rounded-full border-2 border-transparent outline-none text-sm transition-all duration-300 focus:bg-white focus:border-blue-500 focus:shadow-lg focus:-translate-y-0.5 placeholder-gray-400 focus:placeholder-gray-300 input-focus-slide"
-                            @keypress.enter="sendMessage" />
-
-                        <button @click="sendMessage" :disabled="!newMessage.trim()"
+                            @keypress.enter="() => sendMessage(agentId || '', userId || '')" />
+                        {{ agentId, userId }}
+                        <button @click="() => sendMessage(agentId || '', userId || '')" :disabled="!newMessage.trim()"
                             class="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 relative overflow-hidden disabled:cursor-not-allowed send-btn-effect"
                             :class="newMessage.trim()
                                 ? 'text-white shadow-lg scale-105 rotate-12 animate-send-pulse'
@@ -151,6 +152,8 @@ interface Props {
     startExpanded?: boolean
     title?: string
     inputPlaceholder?: string
+    agentId?: string
+    userId?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -167,7 +170,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Emits
 const emit = defineEmits<{
-    messageAdded: [message: { id: number, text: string, isOwn: boolean, timestamp: Date }]
+    messageAdded: [message: { id: number, text: string, owner: boolean, timestamp: Date }]
     chatExpanded: []
     chatMinimized: []
 }>()
@@ -230,16 +233,16 @@ const handleMinimizeChat = () => {
 
 const handleSendMessage = () => {
     const messageText = newMessage.value
-    sendMessage()
+    sendMessage(props.agentId || '', props.userId || '')
 
-    if (messageText.trim()) {
-        emit('messageAdded', {
-            id: Date.now(),
-            text: messageText,
-            isOwn: true,
-            timestamp: new Date()
-        })
-    }
+    // if (messageText.trim()) {
+    //     emit('messageAdded', {
+    //         id: Date.now(),
+    //         text: messageText,
+    //         owner: true,
+    //         timestamp: new Date()
+    //     })
+    // }
 }
 
 // Override methods to use enhanced versions

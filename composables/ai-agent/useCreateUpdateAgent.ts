@@ -59,7 +59,46 @@ export const useCreateUpdateAgent = () => {
       label: 'Preview',
     },
   ]
+  const progressPercentage = computed(() => {
+    return ((currentStep.value - 1) / (totalSteps - 1)) * 100
+  })
+  const showChatWithAgent = ref(false)
 
+  const setStep = (step: number) => {
+    if (step < 1 || step > totalSteps) return
+    switch (step) {
+      case 1:
+        if (selectedAgent) {
+          currentStep.value = step
+        }
+        break
+      case 2:
+        if (selectedAgent && currentStep.value >= 1) {
+          currentStep.value = step
+        }
+        break
+      case 3:
+        if (selectedTopics.value.length > 0 && selectedAgent) {
+          currentStep.value = step
+        }
+        break
+      case 4:
+        if (selectedDocuments.value.length > 0 && selectedAgent) {
+          currentStep.value = step
+        }
+        break
+    }
+  }
+
+  const getStepClass = (step: number) => {
+    if (step < currentStep.value) {
+      return 'step-completed'
+    } else if (step === currentStep.value) {
+      return 'step-active'
+    } else {
+      return 'step-pending'
+    }
+  }
   const changeCreateType = async (type: 'template' | 'custom') => {
     createType.value = type
     if (type === 'custom') {
@@ -98,6 +137,10 @@ export const useCreateUpdateAgent = () => {
   }
 
   const removeTopic = (topic: Topics) => {
+    if (selectedTopics.value.length === 1) {
+      alert('At least one topic is required.')
+      return
+    }
     selectedTopics.value = selectedTopics.value.filter((t) => t.id !== topic.id)
   }
 
@@ -128,49 +171,35 @@ export const useCreateUpdateAgent = () => {
   }
 
   const removeDocument = (file: Documents) => {
+    if (selectedDocuments.value.length === 1) {
+      alert('At least one document is required.')
+      return
+    }
     selectedDocuments.value = selectedDocuments.value.filter(
       (f) => f.id !== file.id
     )
   }
 
-  const progressPercentage = computed(() => {
-    return ((currentStep.value - 1) / (totalSteps - 1)) * 100
-  })
-
-  const setStep = (step: number) => {
-    if (step < 1 || step > totalSteps) return
-    switch (step) {
-      case 1:
-        if (selectedAgent) {
-          currentStep.value = step
-        }
-        break
-      case 2:
-        if (selectedAgent && currentStep.value >= 1) {
-          currentStep.value = step
-        }
-        break
-      case 3:
-        if (selectedTopics.value.length > 0 && selectedAgent) {
-          currentStep.value = step
-        }
-        break
-      case 4:
-        if (selectedDocuments.value.length > 0 && selectedAgent) {
-          currentStep.value = step
-        }
-        break
+  const publishAgent = async () => {
+    if (!selectedAgent.value) return
+    try {
+      selectedAgent.value.published = true
+    } catch (error) {
+      console.error('Error publishing agent:', error)
     }
   }
 
-  const getStepClass = (step: number) => {
-    if (step < currentStep.value) {
-      return 'step-completed'
-    } else if (step === currentStep.value) {
-      return 'step-active'
-    } else {
-      return 'step-pending'
+  const cancelPublish = async () => {
+    if (!selectedAgent.value) return
+    try {
+      selectedAgent.value.published = false
+    } catch (error) {
+      console.error('Error canceling publish:', error)
     }
+  }
+
+  const conversationPreview = async () => {
+    showChatWithAgent.value = true
   }
 
   return {
@@ -195,7 +224,10 @@ export const useCreateUpdateAgent = () => {
     totalSteps,
     stepLabels,
     progressPercentage,
+    showChatWithAgent,
     createAgent,
+    publishAgent,
+    cancelPublish,
     fetchAgents,
     changeCreateType,
     initializeStore,

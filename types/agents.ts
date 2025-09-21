@@ -32,3 +32,28 @@ export interface AgentStats {
   published: number
   draft: number
 }
+
+export interface AgentChat {
+  id: string
+  sender_id: string
+  receiver_id: string
+  owner: boolean
+  messages: Array<{
+    content: string
+    created_at: string | Date
+  }>
+}
+
+export interface InsightProcessList {
+  id: string
+  agent_id: string
+  user_id: string
+  owner: boolean
+  process_time: string
+  created_at: string | Date
+  topics: {
+    id: string
+    title: string
+    content: string
+  }
+}

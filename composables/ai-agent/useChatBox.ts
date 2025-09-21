@@ -1,12 +1,5 @@
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
-
-interface Message {
-  id: number
-  text: string
-  isOwn: boolean
-  timestamp: Date
-}
-
+import type { AgentChat } from '~/types/agents'
 interface ChatBoxProps {
   initialWidth?: number
   initialHeight?: number
@@ -100,41 +93,17 @@ export const useChatBox = (props: ChatBoxProps = {}) => {
   })
 
   // Messages and chat state
+  const agentChatStore = useAgentChatStore()
+  const { currentChatList, agentInsightProcessList, loading, error } =
+    storeToRefs(agentChatStore)
+  const { chatWithAgent, addMessage: storeAddMessage } = agentChatStore
+
   const unreadCount = ref(3)
   const newMessage = ref('')
   const isTyping = ref(false)
-  const messages = ref<Message[]>([
-    {
-      id: 1,
-      text: 'Chào bạn! Mình là John đây 👋',
-      isOwn: false,
-      timestamp: new Date(Date.now() - 900000),
-    },
-    {
-      id: 2,
-      text: 'Hi John! Nice to meet you',
-      isOwn: true,
-      timestamp: new Date(Date.now() - 840000),
-    },
-    {
-      id: 3,
-      text: 'Bạn có rảnh để chat không?',
-      isOwn: false,
-      timestamp: new Date(Date.now() - 780000),
-    },
-    {
-      id: 4,
-      text: 'Có chứ, mình đang rảnh. Bạn có chuyện gì vậy?',
-      isOwn: true,
-      timestamp: new Date(Date.now() - 720000),
-    },
-    {
-      id: 5,
-      text: 'Không có gì đặc biệt, chỉ muốn làm quen thêm bạn bè thôi 😊',
-      isOwn: false,
-      timestamp: new Date(Date.now() - 660000),
-    },
-  ])
+  const messages = computed(() => {
+    return currentChatList.value
+  })
 
   // Computed styles
   const windowStyle = computed(() => ({
@@ -382,18 +351,10 @@ export const useChatBox = (props: ChatBoxProps = {}) => {
   }
 
   // Message functions
-  const sendMessage = () => {
+  const sendMessage = (agentId: string, userId: string) => {
     if (!newMessage.value.trim()) return
-
-    messages.value.push({
-      id: Date.now(),
-      text: newMessage.value,
-      isOwn: true,
-      timestamp: new Date(),
-    })
-
+    chatWithAgent(agentId, newMessage.value)
     newMessage.value = ''
-
     nextTick(() => {
       if (messagesArea.value) {
         messagesArea.value.scrollTop = messagesArea.value.scrollHeight
@@ -420,12 +381,11 @@ export const useChatBox = (props: ChatBoxProps = {}) => {
       ]
 
       setTimeout(() => {
-        messages.value.push({
-          id: Date.now(),
-          text: responses[Math.floor(Math.random() * responses.length)],
-          isOwn: false,
-          timestamp: new Date(),
-        })
+        addMessage(
+          agentId,
+          userId,
+          responses[Math.floor(Math.random() * responses.length)]
+        )
 
         if (!isExpanded.value) {
           unreadCount.value++
@@ -486,28 +446,23 @@ export const useChatBox = (props: ChatBoxProps = {}) => {
   }
 
   // Custom message functions for external use
-  const addMessage = (text: string, isOwn: boolean = true) => {
-    messages.value.push({
-      id: Date.now(),
-      text,
-      isOwn,
-      timestamp: new Date(),
-    })
-
+  const addMessage = (
+    senderId: string,
+    receiverId: string,
+    message: string
+  ) => {
+    storeAddMessage(senderId, receiverId, message)
     nextTick(() => {
       if (messagesArea.value && isExpanded.value) {
         messagesArea.value.scrollTop = messagesArea.value.scrollHeight
       }
     })
-
-    if (!isExpanded.value && !isOwn) {
+    if (!isExpanded.value) {
       unreadCount.value++
     }
   }
 
-  const clearMessages = () => {
-    messages.value = []
-  }
+  const clearMessages = () => {}
 
   const setUnreadCount = (count: number) => {
     unreadCount.value = count
